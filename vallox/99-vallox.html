@@ -3,18 +3,18 @@
 <!-- ------------------------------------------------------------------------------------------ -->
 
 <script type="text/javascript">
-    RED.nodes.registerType('vallox', {
+    RED.nodes.registerType('valloxrx', {
         category: 'Vallox',
-        color: '#8DCEEB',
+        color: '#DDDDDD',
         defaults: {
 			description: { value:"" },
         },
         inputs: 1,
-        outputs: 1,
-        icon: "vallox.png",
-        paletteLabel: "vallox",
+        outputs: 2,
+        icon: "valloxrx.png",
+        paletteLabel: "vallox RX",
         label: function () {
-            return this.description || this.appliance || "Vallox";
+            return this.description || "Vallox RX";
         },
         labelStyle: function() {
             return this.description?"node_label_italic":"";
@@ -23,15 +23,15 @@
 
 </script>
 
-<script type="text/x-red" data-template-name="vallox">
+<script type="text/x-red" data-template-name="valloxrx">
     <div class="form-row">
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
-        <input type="text" id="node-input-description" placeholder="The description of the device (optional)">
+        <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
     </div>  
 </script>
 
-<script type="text/x-red" data-help-name="vallox">
-    <p>A node that controls a Vallox device.</p>
+<script type="text/x-red" data-help-name="valloxrx">
+    <p>A node that decodes RS485 messages from a Vallox device.</p>
 
     <h3>Configuration</h3>
 
@@ -44,5 +44,52 @@
     <p>.</p>
     <p><code>msg.payload</code></p>
 </script>
+
+
+<!-- ------------------------------------------------------------------------------------------ -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('valloxtx', {
+        category: 'Vallox',
+        color: '#DDDDDD',
+        defaults: {
+			description: { value:"" },
+        },
+        inputs: 1,
+        outputs: 2,
+        icon: "valloxtx.png",
+        paletteLabel: "vallox TX",
+        label: function () {
+            return this.description || "Vallox TX";
+        },
+        labelStyle: function() {
+            return this.description?"node_label_italic":"";
+        }
+    });
+
+</script>
+
+<script type="text/x-red" data-template-name="valloxtx">
+    <div class="form-row">
+        <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
+        <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
+    </div>  
+</script>
+
+<script type="text/x-red" data-help-name="valloxtx">
+    <p>A node that encodes RS485 messages for a Vallox device.</p>
+
+    <h3>Configuration</h3>
+
+    <p>Description of the device.</p>
+    
+    <h3>Inputs</h3>
+    <p>.</p>
+    
+    <h3>Outputs</h3>
+    <p>.</p>
+    <p><code>msg.payload</code></p>
+</script>
+
 
 

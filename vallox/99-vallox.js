@@ -7,22 +7,22 @@ module.exports = function (RED) {
     let vallox = require('./vallox.js');
     	
     // --------------------------------------------------------------------------------------------
-    // The vallox node.
-    function ValloxNode(config) {
+    // The vallox receiver node.
+    function ValloxRxNode(config) {
         RED.nodes.createNode(this, config);
         let node = this;
         
         this.on('input', async function (msg) {
 
-            vallox.decode(msg.payload, function (success) {
+            vallox.decode(msg.payload, function (message) {
                 node.status({
                     fill: 'green',
                     shape: 'ring',
                     text: 'ok',
                 });
 
-                msg.payload = data;
-                node.send([msg]);
+                msg.payload = message;
+                node.send([msg, null]);
             }, function (errorMessage) {
                 node.status({
                     fill: 'red',
@@ -31,6 +31,8 @@ module.exports = function (RED) {
                 });
 
                 node.warn(errorMessage);
+                msg.payload = errorMessage;
+                node.send([null, msg]);
             });
         });
 
@@ -39,5 +41,43 @@ module.exports = function (RED) {
             done();
         });
     }
-    RED.nodes.registerType("vallox", ValloxNode);
+    RED.nodes.registerType("valloxrx", ValloxRxNode);
+
+        
+    // --------------------------------------------------------------------------------------------
+    // The vallox sender node.
+    function ValloxTxNode(config) {
+        RED.nodes.createNode(this, config);
+        let node = this;
+        
+        this.on('input', async function (msg) {
+
+            vallox.encode(msg.payload, function (message) {
+                node.status({
+                    fill: 'green',
+                    shape: 'ring',
+                    text: 'ok',
+                });
+
+                msg.payload = message;
+                node.send([msg, null]);
+            }, function (errorMessage) {
+                node.status({
+                    fill: 'red',
+                    shape: 'ring',
+                    text: errorMessage,
+                });
+
+                node.warn(errorMessage);
+                msg.payload = errorMessage;
+                node.send([null, msg]);
+            });
+        });
+
+        this.on('close', function(done) {
+            node.status({});
+            done();
+        });
+    }
+    RED.nodes.registerType("valloxtx", ValloxTxNode);
 }
