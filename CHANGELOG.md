@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.2]
+### added buffering of incoming data
+
 ## [0.1.0]
 ### Initial version
 
