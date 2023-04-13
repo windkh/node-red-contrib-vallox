@@ -41,12 +41,17 @@ Changes can be followed [here](/CHANGELOG.md)
 
 # Vallox RX Node
 The node is able to parse an incoming 6 byte long message.
-See the example flow [**vallox**](examples/valloxrx.json) in the examples folder.
+See the example flow [**vallox rx**](examples/valloxrx.json) in the examples folder.
 
 
 # Vallox TX Node
 The node is able to send an a 6 byte long message.
-See the example flow [**vallox**](examples/valloxtx.json) in the examples folder.
+See the example flow [**vallox tx**](examples/valloxtx.json) in the examples folder.
+
+
+# Vallox Node
+The node is able to store the state of received messages from Vallox RX Node.
+See the example flow [**vallox**](examples/vallox.json) in the examples folder.
 
 
 # License

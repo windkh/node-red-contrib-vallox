@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.4]
+### added vallox node
+
 ## [0.1.3]
 ### added conversion of incoming data
 
