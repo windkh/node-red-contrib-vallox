@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-vallox",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "Vallox node for serial RS485 protocol.",
     "node-red": {
 	    "version": ">=0.1.0",

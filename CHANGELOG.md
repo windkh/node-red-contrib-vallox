@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.6]
+### improved vallox node: variables can be set now: e.g. FanSpeed
+
 ## [0.1.5]
 ### improved vallox node: added example for http usage
 
