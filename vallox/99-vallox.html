@@ -92,4 +92,72 @@
 </script>
 
 
+<!-- ------------------------------------------------------------------------------------------ -->
 
+<script type="text/javascript">
+    RED.nodes.registerType('vallox', {
+        category: 'Vallox',
+        color: '#DDDDDD',
+        defaults: {
+			description: { value: "", required: true },
+        	receiver: { value: "33" , required: true},
+            sendonnewdata: { value: true, required: true },
+        },
+        inputs: 1,
+        outputs: 3,
+        icon: "vallox.png",
+        paletteLabel: "vallox",
+        label: function () {
+            return this.description || "Vallox";
+        },
+        labelStyle: function() {
+            return this.description?"node_label_italic":"";
+        }
+    });
+
+</script>
+
+<script type="text/x-red" data-template-name="vallox">
+    <div class="form-row">
+        <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
+        <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
+    </div> 
+    <div class="form-row">
+        <label for="node-input-receiver"><i class="fa fa-address-card"></i> Receiver</label>
+        <select id="node-config-input-receiver">
+            <option value="33">Panel 1</option>
+            <option value="34">Panel 2</option>
+            <option value="35">Panel 3</option>
+            <option value="36">Panel 4</option>
+            <option value="37">Panel 5</option>
+            <option value="38">Panel 6</option>
+            <option value="39">Panel 7</option>
+            <option value="40">LON</option>
+            <option value="17">Master 1</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-sendonnewdata"><i class="fa fa-rss"></i> Send msg on new data.</label>
+        <input type="checkbox" id="node-input-sendonnewdata" style="display: inline-block; width: auto; vertical-align: top;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="vallox">
+    <p>A node that maintains the state of a Vallox device.</p>
+
+    <h3>Configuration</h3>
+
+    <p>Description of the device.</p>
+    <p>Receiver ID of the device.</p>
+    
+    <h3>Inputs</h3>
+    <p>Option 1.: empty - triggers output 1 with current state.</p>
+    <p>Option 2.: array of bytes from RX node - decodes and updates the current state</p>
+    <p>Option 3.: request message - encodes the message and triggers output 2.</p>
+    
+    <h3>Outputs</h3>
+    <p>1. an object with the current state.</p>
+    <p>2. an array of bytes forming a binary telegram that can be sent to the TX node.</p>
+    <p>3. an error string.</p>
+    <p><code>msg.payload</code></p>
+</script>
