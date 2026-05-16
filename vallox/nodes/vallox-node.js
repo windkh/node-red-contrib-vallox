@@ -48,7 +48,7 @@ module.exports = function (RED) {
             if (message !== undefined)
             {
                 // Input from RX node
-                if (message.hasOwnProperty('receiver')) {
+                if (Object.prototype.hasOwnProperty.call(message, 'receiver')) {
                     let newData = false;
                     if (message.receiver === receiver || message.receiver === receiverGroup) {
                         if (message.request === vallox.constants.VALLOX_SET) {
@@ -64,7 +64,7 @@ module.exports = function (RED) {
                         node.send([msg]);
                     }
                 }
-                else if (message.hasOwnProperty('request')) {
+                else if (Object.prototype.hasOwnProperty.call(message, 'request')) {
                     let request = message.request;
                     let variable = message.variable;
                     let value = message.value;

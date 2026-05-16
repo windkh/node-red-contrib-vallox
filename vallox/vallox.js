@@ -119,10 +119,10 @@ const Variables = {
 
     // 1 1 1 1 1 1 1 1 
     // | | | | | | | |
-    // | | | | | | | +- 0 CO2 higher speed-request 0=no 1=Speed​​. up
-    // | | | | | | +--- 1 CO2 lower rate request 0=no 1=Speed​​. down
-    // | | | | | +----- 2 %RH lower rate request 0=no 1=Speed​​. down
-    // | | | | +------- 3 Switch low. Speed.-request 0=no 1=Speed​. down
+    // | | | | | | | +- 0 CO2 higher speed-request 0=no 1=Speed. up
+    // | | | | | | +--- 1 CO2 lower rate request 0=no 1=Speed. down
+    // | | | | | +----- 2 %RH lower rate request 0=no 1=Speed. down
+    // | | | | +------- 3 Switch low. Speed.-request 0=no 1=Speed. down
     // | | | +--------- 4 
     // | | +----------- 5 
     // | +------------- 6 CO2 alarm 0=no 1=CO2 alarm
