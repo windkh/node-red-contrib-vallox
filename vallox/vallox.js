@@ -685,14 +685,11 @@ function getVariableMappingEntry(variable){
 
     let result;
     let keys = Object.keys(VALLOX_COMMAND_VARIABLE_MAPPING);
-    for (let key in keys) {
-        if (VALLOX_COMMAND_VARIABLE_MAPPING.hasOwnProperty(key)) {
-
-            let entry = VALLOX_COMMAND_VARIABLE_MAPPING[key];
-            if(entry.name === variable){
-                result = entry;
-                break;
-            }
+    for (let key of keys) {
+        let entry = VALLOX_COMMAND_VARIABLE_MAPPING[key];
+        if (entry.name === variable){
+            result = entry;
+            break;
         }
     }
 

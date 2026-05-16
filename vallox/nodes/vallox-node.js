@@ -27,7 +27,8 @@ module.exports = function (RED) {
 
             if (request !== vallox.constants.VALLOX_GET) {
                 if (result.readonly){
-                    errorHandler("Variable " + variable + " is readonly.")
+                    errorHandler("Variable " + variable + " is readonly.");
+                    return;
                 }
             }
 

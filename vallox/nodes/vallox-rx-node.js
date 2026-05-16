@@ -71,8 +71,9 @@ module.exports = function (RED) {
                             text: 'ok',
                         });
 
-                        msg.payload = message;
-                        node.send([msg, null]);
+                        // emit a fresh msg per frame: multiple back-to-back frames in
+                        // one input buffer would otherwise alias the same payload slot.
+                        node.send([Object.assign({}, msg, { payload: message }), null]);
                     }, function (errorMessage) {
                         node.status({
                             fill: 'red',
@@ -81,8 +82,7 @@ module.exports = function (RED) {
                         });
 
                         node.warn(errorMessage);
-                        msg.payload = errorMessage;
-                        node.send([null, msg]);
+                        node.send([null, Object.assign({}, msg, { payload: errorMessage })]);
                     });
 
                 }
