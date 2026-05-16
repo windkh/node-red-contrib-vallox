@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.14]
+### Track the protocol-doc plaintext reference and the CLAUDE orientation doc
+- Added `doc/protocol.txt` (pdftotext extraction of the Vallox RS485 protocol PDF) and a project-level `CLAUDE.md` describing the architecture, commands and per-task version-bump rule for future Claude Code sessions. Un-ignored `doc/` in `.gitignore`.
+
 ## [0.1.13]
 ### Adopt per-task changelog and version-bump policy
 - Every committed task now bumps the package version and gets a changelog entry; 0.1.8 - 0.1.12 added retroactively for the work done since 0.1.7.
