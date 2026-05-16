@@ -31,18 +31,36 @@
 </script>
 
 <script type="text/x-red" data-help-name="valloxrx">
-    <p>A node that decodes RS485 messages from a Vallox device.</p>
+    <p>Decodes Vallox RS485 telegrams (6-byte frames) from a raw byte stream &mdash; typically the output of a <code>serial in</code> node or an MQTT bridge.</p>
+    <p>Incoming bytes are buffered until a complete frame is available. Misaligned leading bytes are dropped at the next start byte (<code>0x01</code>).</p>
 
     <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt class="optional">Description <span class="property-type">string</span></dt>
+        <dd>Optional label shown on the node in the editor.</dd>
+    </dl>
 
-    <p>Description of the device.</p>
-    
     <h3>Inputs</h3>
-    <p>.</p>
-    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">Buffer | number[]</span></dt>
+        <dd>Raw bytes from the RS485 bus.</dd>
+    </dl>
+
     <h3>Outputs</h3>
-    <p>.</p>
-    <p><code>msg.payload</code></p>
+    <ol class="node-ports">
+        <li>Decoded telegram
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">object</span></dt>
+                <dd>Decoded frame with <code>domain</code>, <code>sender</code>, <code>receiver</code>, <code>command</code>, <code>arg</code>, <code>checksum</code>, <code>variable</code> (human name, e.g. <code>FanSpeed</code>), <code>request</code> (<code>"GET"</code> or <code>"SET"</code>) and &mdash; for <code>SET</code> frames &mdash; <code>value</code> (already converted, e.g. fan speed level 1-8 or temperature in &deg;C).</dd>
+            </dl>
+        </li>
+        <li>Decoding error
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>Error message (bad checksum, wrong length, etc.).</dd>
+            </dl>
+        </li>
+    </ol>
 </script>
 
 
@@ -77,18 +95,35 @@
 </script>
 
 <script type="text/x-red" data-help-name="valloxtx">
-    <p>A node that encodes RS485 messages for a Vallox device.</p>
+    <p>Encodes a Vallox RS485 telegram into a 6-byte frame, ready to send to the RS485 bus via a <code>serial out</code> node or an MQTT bridge. Normally fed by the second output of the <strong>vallox</strong> node.</p>
 
     <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt class="optional">Description <span class="property-type">string</span></dt>
+        <dd>Optional label shown on the node in the editor.</dd>
+    </dl>
 
-    <p>Description of the device.</p>
-    
     <h3>Inputs</h3>
-    <p>.</p>
-    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Frame to encode: <code>{ domain, sender, receiver, command, arg }</code>. The checksum byte is appended automatically.</dd>
+    </dl>
+
     <h3>Outputs</h3>
-    <p>.</p>
-    <p><code>msg.payload</code></p>
+    <ol class="node-ports">
+        <li>Encoded telegram
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number[]</span></dt>
+                <dd>6-byte array <code>[domain, sender, receiver, command, arg, checksum]</code>.</dd>
+            </dl>
+        </li>
+        <li>Encoding error
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>Error message (e.g. empty input).</dd>
+            </dl>
+        </li>
+    </ol>
 </script>
 
 
@@ -143,21 +178,48 @@
 </script>
 
 <script type="text/x-red" data-help-name="vallox">
-    <p>A node that maintains the state of a Vallox device.</p>
+    <p>Maintains the in-memory state of a Vallox device and produces request telegrams. The node listens for decoded frames addressed to its configured receiver (or that receiver's group) and stores each <code>SET</code> value under its human-readable variable name (e.g. <code>FanSpeed</code>, <code>TemperatureOutside</code>).</p>
 
     <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt>Description <span class="property-type">string</span></dt>
+        <dd>Label shown on the node.</dd>
+        <dt>Receiver <span class="property-type">number</span></dt>
+        <dd>RS485 address of the panel or master this node represents (Panel 1 = 33 / 0x21 &hellip; Panel 7 = 39 / 0x27, LON = 40 / 0x28, Master 1 = 17 / 0x11).</dd>
+        <dt>Send msg on new data <span class="property-type">boolean</span></dt>
+        <dd>If checked, output 1 fires every time a matching <code>SET</code> frame updates the state; otherwise output 1 only fires on an explicit query.</dd>
+    </dl>
 
-    <p>Description of the device.</p>
-    <p>Receiver ID of the device.</p>
-    
     <h3>Inputs</h3>
-    <p>Option 1.: empty - triggers output 1 with current state.</p>
-    <p>Option 2.: array of bytes from RX node - decodes and updates the current state</p>
-    <p>Option 3.: request message - encodes the message and triggers output 2.</p>
-    
+    <p>The node accepts three input shapes on <code>msg.payload</code>:</p>
+    <dl class="message-properties">
+        <dt>Decoded frame <span class="property-type">object</span></dt>
+        <dd>Output of the <strong>valloxrx</strong> node (an object with a <code>receiver</code> field). Matching frames update the internal state.</dd>
+        <dt>Request <span class="property-type">object</span></dt>
+        <dd><code>{ request: "GET" | "SET", variable: "&lt;name&gt;", value: &lt;value&gt; }</code> &mdash; produces an encoded request on output 2. A <code>SET</code> on a readonly variable goes to output 3 as an error.</dd>
+        <dt class="optional">Anything else / empty <span class="property-type">any</span></dt>
+        <dd>Emits the current state snapshot on output 1.</dd>
+    </dl>
+
     <h3>Outputs</h3>
-    <p>1. an object with the current state.</p>
-    <p>2. an array of bytes forming a binary telegram that can be sent to the TX node.</p>
-    <p>3. an error string.</p>
-    <p><code>msg.payload</code></p>
+    <ol class="node-ports">
+        <li>Current state
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">object</span></dt>
+                <dd>All variables seen so far, keyed by name (e.g. <code>FanSpeed</code>, <code>TemperatureOutside</code>, &hellip;) plus <code>Receiver</code>.</dd>
+            </dl>
+        </li>
+        <li>Outgoing telegram
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">object</span></dt>
+                <dd>Telegram ready to feed into the <strong>valloxtx</strong> node.</dd>
+            </dl>
+        </li>
+        <li>Error
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>Error message (e.g. attempt to <code>SET</code> a readonly variable).</dd>
+            </dl>
+        </li>
+    </ol>
 </script>
