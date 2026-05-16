@@ -399,10 +399,10 @@ function convertFlags6(value){
         Bit0 : (value & 0x01) != 0,
 		Bit1 : (value & 0x02) != 0,
 		Bit2 : (value & 0x04) != 0,
-		RemoteMonitoringControl : (value & 0x08) != 0,
-		FirePlaceSwitchActivator : (value & 0x10) != 0,
-		FirePlaceBoosterStatus : (value & 0x20) != 0,
-    	Bit6 : (value & 0x40) != 0,
+		Bit3 : (value & 0x08) != 0,
+    	RemoteMonitoringControl : (value & 0x10) != 0,
+		FirePlaceSwitchActivator : (value & 0x20) != 0,
+		FirePlaceBoosterStatus : (value & 0x40) != 0,
     	Bit7 : (value & 0x80) != 0,
     };
 
@@ -459,10 +459,21 @@ function convertHeating(value)
     return result;
 }
 
+function convertHeatingBack(value)
+{
+    let result = value * 2.5;
+    return result;
+}
+
 // 3 is around 1 degree
 function convertHysteresis(value)
 {
     return Math.round(value / 3);
+}
+
+function convertHysteresisBack(value)
+{
+    return value * 3;
 }
 
 function convertError(value)
@@ -592,6 +603,25 @@ function convertTemperature(value)
     return VALLOX_TEMPERATURE_MAPPING[value];
 }
 
+// Inverse NTC lookup: find the byte whose mapped temperature is closest to the
+// requested °C. The mapping is monotonically non-decreasing with duplicates, so
+// the first such index is returned.
+function convertTemperatureBack(temperature)
+{
+    let bestIndex = 0;
+    let bestDiff = Math.abs(VALLOX_TEMPERATURE_MAPPING[0] - temperature);
+    for (let i = 1; i < VALLOX_TEMPERATURE_MAPPING.length; i++)
+    {
+        let diff = Math.abs(VALLOX_TEMPERATURE_MAPPING[i] - temperature);
+        if (diff < bestDiff)
+        {
+            bestDiff = diff;
+            bestIndex = i;
+        }
+    }
+    return bestIndex;
+}
+
 const VALLOX_COMMAND_VARIABLE_MAPPING = {};
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.GET] = { name : Constants.VALLOX_GET, readonly: true, command : Variables.GET };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.IOPORT_FANSPEED_RELAYS] = { name : 'IoPortFanSpeedRelays', readonly: true, command : Variables.IOPORT_FANSPEED_RELAYS  };
@@ -610,35 +640,35 @@ VALLOX_COMMAND_VARIABLE_MAPPING[Variables.TEMP_EXHAUST] = { name :'TemperatureEx
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.TEMP_INSIDE] = { name : 'TemperatureInside', readonly: true, command : Variables.TEMP_INSIDE };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.TEMP_INCOMMING] = { name : 'TemperatureIncoming', readonly: true, command : Variables.TEMP_INCOMMING };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.LAST_ERROR_NUMBER] = { name : 'LastErrorNumber', readonly: true, command : Variables.LAST_ERROR_NUMBER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_ON_COUNTER] = { name : 'PostHeastingOnCounter', readonly: true, command : Variables.POST_HEATING_ON_COUNTER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_OFF_TIME] = { name : 'PostHeatingOffTime', readonly: true, command : Variables.POST_HEATING_OFF_TIME };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_TARGET_VALUE] = { name : 'PostHeatingTargetValue', readonly: true, command : Variables.POST_HEATING_TARGET_VALUE };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_ON_COUNTER] = { name : 'PostHeastingOnCounter', readonly: false, command : Variables.POST_HEATING_ON_COUNTER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_OFF_TIME] = { name : 'PostHeatingOffTime', readonly: false, command : Variables.POST_HEATING_OFF_TIME };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_TARGET_VALUE] = { name : 'PostHeatingTargetValue', readonly: false, command : Variables.POST_HEATING_TARGET_VALUE };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_1] = { name : 'Flags1', readonly: true, command : Variables.FLAGS_1 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_2] = { name : 'Flags2', readonly: true, command : Variables.FLAGS_2 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_3] = { name : 'Flags3', readonly: true, command : Variables.FLAGS_3 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_4] = { name : 'Flags4', readonly: true, command : Variables.FLAGS_4 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_5] = { name : 'Flags5', readonly: true, command : Variables.FLAGS_5 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_6] = { name : 'Flags6', readonly: true, command : Variables.FLAGS_6 };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FIRE_PLACE_BOOSTER_COUNTER] = { name : 'FirePlaceBoosterCounter', readonly: true, command : Variables.FIRE_PLACE_BOOSTER_COUNTER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FIRE_PLACE_BOOSTER_COUNTER] = { name : 'FirePlaceBoosterCounter', readonly: false, command : Variables.FIRE_PLACE_BOOSTER_COUNTER };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SUSPEND] = { name : 'Suspend', readonly: true, command : Variables.SUSPEND };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.RESUME] = { name : 'Resume', readonly: true, command : Variables.RESUME };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SELECT] = { name : 'Select', readonly: true, command : Variables.SELECT };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HEATING_SET_POINT] = { name : 'HeatingSetPoint', readonly: true, command : Variables.HEATING_SET_POINT };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FAN_SPEED_MAX] = { name : 'FanSpeedMax', readonly: true, command : Variables.FAN_SPEED_MAX };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SERVICE_REMINDER] = { name : 'ServiceReminder', readonly: true, command : Variables.SERVICE_REMINDER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PRE_HEATING_SET_POINT] = { name : 'PreHeatingSetPoint', readonly: true, command : Variables.PRE_HEATING_SET_POINT };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.INPUT_FAN_STOP] = { name : 'InputFanStop', readonly: true, command : Variables.INPUT_FAN_STOP };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FAN_SPEED_MIN] = { name : 'FanSpeedMin', readonly: true, command : Variables.FAN_SPEED_MIN };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PROGRAM] = { name : 'Program', readonly: true, command : Variables.PROGRAM };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.MAINTENANCE_MONTH_COUNTER] = { name : 'MaintenanceMonthCounter', readonly: true, command : Variables.MAINTENANCE_MONTH_COUNTER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.BASIC_HUMIDITY_LEVEL] = { name : 'BasicHumidityLevel', readonly: true, command : Variables.BASIC_HUMIDITY_LEVEL };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HRC_BYPASS] = { name : 'HRCBypass', readonly: true, command : Variables.HRC_BYPASS };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.DC_FAN_INPUT_ADJUSTMENT] = { name : 'DCFanInputAdjustment', readonly: true, command : Variables.DC_FAN_INPUT_ADJUSTMENT };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.DC_FAN_OUTPUT_ADJUSTMENT] = { name : 'DCFanOutputAdjustment', readonly: true, command : Variables.DC_FAN_OUTPUT_ADJUSTMENT };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CELL_DEFROSTING_HYSTERESIS] = { name : 'CellDefrostingHysteresis', readonly: true, command : Variables.CELL_DEFROSTING_HYSTERESIS };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_SET_POINT_UPPER] = { name : 'CO2SetPointUpper', readonly: true, command : Variables.CO2_SET_POINT_UPPER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_SET_POINT_LOWER] = { name : 'CO2SetPointLower', readonly: true, command : Variables.CO2_SET_POINT_LOWER };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PROGRAM2] = { name : 'Program2', readonly: true, command : Variables.PROGRAM2 };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HEATING_SET_POINT] = { name : 'HeatingSetPoint', readonly: false, command : Variables.HEATING_SET_POINT };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FAN_SPEED_MAX] = { name : 'FanSpeedMax', readonly: false, command : Variables.FAN_SPEED_MAX };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SERVICE_REMINDER] = { name : 'ServiceReminder', readonly: false, command : Variables.SERVICE_REMINDER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PRE_HEATING_SET_POINT] = { name : 'PreHeatingSetPoint', readonly: false, command : Variables.PRE_HEATING_SET_POINT };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.INPUT_FAN_STOP] = { name : 'InputFanStop', readonly: false, command : Variables.INPUT_FAN_STOP };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FAN_SPEED_MIN] = { name : 'FanSpeedMin', readonly: false, command : Variables.FAN_SPEED_MIN };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PROGRAM] = { name : 'Program', readonly: false, command : Variables.PROGRAM };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.MAINTENANCE_MONTH_COUNTER] = { name : 'MaintenanceMonthCounter', readonly: false, command : Variables.MAINTENANCE_MONTH_COUNTER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.BASIC_HUMIDITY_LEVEL] = { name : 'BasicHumidityLevel', readonly: false, command : Variables.BASIC_HUMIDITY_LEVEL };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HRC_BYPASS] = { name : 'HRCBypass', readonly: false, command : Variables.HRC_BYPASS };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.DC_FAN_INPUT_ADJUSTMENT] = { name : 'DCFanInputAdjustment', readonly: false, command : Variables.DC_FAN_INPUT_ADJUSTMENT };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.DC_FAN_OUTPUT_ADJUSTMENT] = { name : 'DCFanOutputAdjustment', readonly: false, command : Variables.DC_FAN_OUTPUT_ADJUSTMENT };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CELL_DEFROSTING_HYSTERESIS] = { name : 'CellDefrostingHysteresis', readonly: false, command : Variables.CELL_DEFROSTING_HYSTERESIS };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_SET_POINT_UPPER] = { name : 'CO2SetPointUpper', readonly: false, command : Variables.CO2_SET_POINT_UPPER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_SET_POINT_LOWER] = { name : 'CO2SetPointLower', readonly: false, command : Variables.CO2_SET_POINT_LOWER };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.PROGRAM2] = { name : 'Program2', readonly: false, command : Variables.PROGRAM2 };
 
 function getVariableName(command){
     let variable
@@ -820,40 +850,40 @@ function convertValueBack(command, value){
         case Variables.FAN_SPEED_MIN:
             convertedValue = convertFanSpeedBack(value);
             break;
-        // case Variables.HRC_BYPASS:
-        // case Variables.HEATING_SET_POINT:
-        // case Variables.PRE_HEATING_SET_POINT:
-        // case Variables.INPUT_FAN_STOP:
-        // case Variables.POST_HEATING_TARGET_VALUE:
-        //     convertedValue = convertTemperatureBack(value);
-        //     break;
-        // case Variables.CELL_DEFROSTING_HYSTERESIS:
-        //     convertedValue = convertHysteresisBack(value);
-        //     break;
-        // case Variables.POST_HEATING_ON_COUNTER:
-        // case Variables.POST_HEATING_OFF_TIME:
-        //     value = convertHeating(value);
-        //     break;
-        // case Variables.FIRE_PLACE_BOOSTER_COUNTER:
-        //     convertedValue = value; // minutes remaining
-        //     break;
-        // case Variables.SERVICE_REMINDER:
-        //     convertedValue = value; // months
-        //     break;
-        // case Variables.MAINTENANCE_MONTH_COUNTER:
-        //     convertedValue = value;
-        //     break;
-        // case Variables.BASIC_HUMIDITY_LEVEL:
-        //     convertedValue = value;
-        //     break;
-        // case Variables.DC_FAN_INPUT_ADJUSTMENT:
-        // case Variables.DC_FAN_OUTPUT_ADJUSTMENT:
-        //     convertedValue = value; // %
-        //     break;
-        // case Variables.CO2_SET_POINT_UPPER:
-        // case Variables.CO2_SET_POINT_LOWER:
-        //     convertedValue = value;
-        //     break;
+        case Variables.HRC_BYPASS:
+        case Variables.HEATING_SET_POINT:
+        case Variables.PRE_HEATING_SET_POINT:
+        case Variables.INPUT_FAN_STOP:
+        case Variables.POST_HEATING_TARGET_VALUE:
+            convertedValue = convertTemperatureBack(value);
+            break;
+        case Variables.CELL_DEFROSTING_HYSTERESIS:
+            convertedValue = convertHysteresisBack(value);
+            break;
+        case Variables.POST_HEATING_ON_COUNTER:
+        case Variables.POST_HEATING_OFF_TIME:
+            convertedValue = convertHeatingBack(value);
+            break;
+        case Variables.FIRE_PLACE_BOOSTER_COUNTER:
+            convertedValue = value; // minutes remaining
+            break;
+        case Variables.SERVICE_REMINDER:
+            convertedValue = value; // months
+            break;
+        case Variables.MAINTENANCE_MONTH_COUNTER:
+            convertedValue = value;
+            break;
+        case Variables.BASIC_HUMIDITY_LEVEL:
+            convertedValue = value;
+            break;
+        case Variables.DC_FAN_INPUT_ADJUSTMENT:
+        case Variables.DC_FAN_OUTPUT_ADJUSTMENT:
+            convertedValue = value; // %
+            break;
+        case Variables.CO2_SET_POINT_UPPER:
+        case Variables.CO2_SET_POINT_LOWER:
+            convertedValue = value;
+            break;
         default:
             convertedValue = value;
             break;
