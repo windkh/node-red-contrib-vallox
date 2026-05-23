@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit -m ' *)",
+      "Bash(node -e \"const stub = { nodes: { createNode: \\(\\) => {}, registerType: \\(n\\) => console.log\\('registered:', n\\) } }; require\\('./vallox/99-vallox.js'\\)\\(stub\\);\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);const lines=fs.readFileSync\\('vallox/vallox.js','utf8'\\).split\\('\\\\n'\\);for\\(let i=121;i<=125;i++\\){const l=lines[i-1];const cps=Array.from\\(l\\).map\\(c=>c.codePointAt\\(0\\).toString\\(16\\)\\).filter\\(h=>parseInt\\(h,16\\)>127\\);console.log\\(i, JSON.stringify\\(l\\), 'non-ASCII codepoints:', cps\\);}\")"
+    ]
+  }
+}

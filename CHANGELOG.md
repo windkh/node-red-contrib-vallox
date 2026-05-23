@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.15]
+### Track scrubbed `.claude/settings.json`
+- Committed the project-shared Claude Code permission allow-list after removing absolute filesystem paths (the file now references repo-relative paths and a couple of narrow Bash one-liners).
+
 ## [0.1.14]
 ### Track the protocol-doc plaintext reference and the CLAUDE orientation doc
 - Added `doc/protocol.txt` (pdftotext extraction of the Vallox RS485 protocol PDF) and a project-level `CLAUDE.md` describing the architecture, commands and per-task version-bump rule for future Claude Code sessions. Un-ignored `doc/` in `.gitignore`.
