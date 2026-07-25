@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.16]
+### Restrict the published tarball with a `files` section
+- `package.json` now whitelists `vallox/` (runtime + editor UI + node icons), `examples/` (importable via the Node-RED editor) and `CHANGELOG.md`; `package.json`, `README.md` and `LICENSE` are always included by npm.
+- Keeps `test/`, `doc/protocol.txt`, `eslint.config.js`, `.github/`, `.vscode/`, `.claude/` and the unused top-level `icons/` out of the package.
+
 ## [0.1.15]
 ### Track scrubbed `.claude/settings.json`
 - Committed the project-shared Claude Code permission allow-list after removing absolute filesystem paths (the file now references repo-relative paths and a couple of narrow Bash one-liners).
