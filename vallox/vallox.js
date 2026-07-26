@@ -273,7 +273,7 @@ const Variables = {
 };
 
 function convertMultiPurpose1(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -288,7 +288,7 @@ function convertMultiPurpose1(value) {
 }
 
 function convertMultiPurpose2(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         DamperMotorPosition: (value & 0x02) != 0,
         FaultSignalRelayClosed: (value & 0x04) != 0,
@@ -303,7 +303,7 @@ function convertMultiPurpose2(value) {
 }
 
 function convertInstalledCO2Sensors(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Sensor1Installed: (value & 0x02) != 0,
         Sensor2Installed: (value & 0x04) != 0,
@@ -318,7 +318,7 @@ function convertInstalledCO2Sensors(value) {
 }
 
 function convertFlags1(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -333,7 +333,7 @@ function convertFlags1(value) {
 }
 
 function convertFlags2(value) {
-    let result = {
+    const result = {
         CO2HigherSpeedRequest: (value & 0x01) != 0,
         CO2LowerSpeedRequest: (value & 0x02) != 0,
         HumiditySpeedRequest: (value & 0x04) != 0,
@@ -348,7 +348,7 @@ function convertFlags2(value) {
 }
 
 function convertFlags3(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -363,7 +363,7 @@ function convertFlags3(value) {
 }
 
 function convertFlags4(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -378,7 +378,7 @@ function convertFlags4(value) {
 }
 
 function convertFlags5(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -393,7 +393,7 @@ function convertFlags5(value) {
 }
 
 function convertFlags6(value) {
-    let result = {
+    const result = {
         Bit0: (value & 0x01) != 0,
         Bit1: (value & 0x02) != 0,
         Bit2: (value & 0x04) != 0,
@@ -408,7 +408,7 @@ function convertFlags6(value) {
 }
 
 function convertSelect(value) {
-    let result = {
+    const result = {
         PowerState: (value & 0x01) != 0,
         Co2AdjustState: (value & 0x02) != 0,
         HumidityAdjustState: (value & 0x04) != 0,
@@ -423,7 +423,7 @@ function convertSelect(value) {
 }
 
 function convertProgram(value) {
-    let result = {
+    const result = {
         AdjustmentIntervalMinutes: value & 0x0f,
 
         AutomaticHumidityLevelSeekerState: (value & 0x10) != 0,
@@ -436,7 +436,7 @@ function convertProgram(value) {
 }
 
 function convertProgram2(value) {
-    let result = {
+    const result = {
         MaxSpeedLimitMode: (value & 0x01) != 0, // 0 = with adjustment, 1 = always
         // Bits 1-7 are undefined in the protocol document. They are reported so that a
         // decoded object can be written back without losing what the unit had set.
@@ -528,24 +528,24 @@ function convertProgram2Back(value) {
 // 33H = 0 %RH, FFH = 100 %RH, calculation formula (x - 51) / 2.04.
 // Stated for 2AH, 2FH, 30H and AEH in the protocol document.
 function convertHumidity(value) {
-    let humidity = (value - 51) / 2.04;
+    const humidity = (value - 51) / 2.04;
     return Math.round(humidity * 10) / 10;
 }
 
 function convertHumidityBack(value) {
-    let raw = Math.round(value * 2.04 + 51);
+    const raw = Math.round(value * 2.04 + 51);
     return Math.min(255, Math.max(0, raw));
 }
 
 // percentage X / 2.5
 function convertHeating(value) {
-    let result = value / 2.5;
+    const result = value / 2.5;
     return result;
 }
 
 function convertHeatingBack(value) {
     // Must be a whole byte: value * 2.5 is fractional for odd percentages.
-    let result = Math.round(value * 2.5);
+    const result = Math.round(value * 2.5);
     return Math.min(255, Math.max(0, result));
 }
 
@@ -594,7 +594,7 @@ const VALLOX_FAN_SPEED_MAPPING = [0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff
 
 // 8 --> 0xFF
 function convertFanSpeedBack(value) {
-    let fanSpeed = VALLOX_FAN_SPEED_MAPPING[value - 1];
+    const fanSpeed = VALLOX_FAN_SPEED_MAPPING[value - 1];
     return fanSpeed;
 }
 
@@ -613,7 +613,7 @@ function convertFanSpeed(value) {
 }
 
 function convertFanSpeedRelays(value) {
-    let result = {
+    const result = {
         FanSpeedRelay1: (value & 0x01) != 0,
         FanSpeedRelay2: (value & 0x02) != 0,
         FanSpeedRelay3: (value & 0x04) != 0,
@@ -652,7 +652,7 @@ function convertTemperatureBack(temperature) {
     let bestIndex = 0;
     let bestDiff = Math.abs(VALLOX_TEMPERATURE_MAPPING[0] - temperature);
     for (let i = 1; i < VALLOX_TEMPERATURE_MAPPING.length; i++) {
-        let diff = Math.abs(VALLOX_TEMPERATURE_MAPPING[i] - temperature);
+        const diff = Math.abs(VALLOX_TEMPERATURE_MAPPING[i] - temperature);
         if (diff < bestDiff) {
             bestDiff = diff;
             bestIndex = i;
@@ -861,12 +861,12 @@ const VALLOX_LEGACY_VARIABLE_NAMES = Object.freeze({
 });
 
 function getVariableMappingEntry(variable) {
-    let name = VALLOX_LEGACY_VARIABLE_NAMES[variable] || variable;
+    const name = VALLOX_LEGACY_VARIABLE_NAMES[variable] || variable;
 
     let result;
-    let keys = Object.keys(VALLOX_COMMAND_VARIABLE_MAPPING);
-    for (let key of keys) {
-        let entry = VALLOX_COMMAND_VARIABLE_MAPPING[key];
+    const keys = Object.keys(VALLOX_COMMAND_VARIABLE_MAPPING);
+    for (const key of keys) {
+        const entry = VALLOX_COMMAND_VARIABLE_MAPPING[key];
         if (entry.name === name) {
             result = entry;
             break;
@@ -890,7 +890,7 @@ function isReadonly(command) {
 function getCommand(variable) {
     let command;
 
-    let entry = getVariableMappingEntry(variable);
+    const entry = getVariableMappingEntry(variable);
     if (entry !== undefined) {
         command = entry.command;
     }
@@ -1089,14 +1089,14 @@ function calculateChecksum(buffer) {
 function decode(buffer, messageHandler, errorHandler) {
     if (buffer !== undefined) {
         if (buffer.length === Constants.VALLOX_LENGTH) {
-            let domain = buffer[0];
-            let sender = buffer[1];
-            let receiver = buffer[2];
-            let command = buffer[3];
-            let arg = buffer[4];
-            let checksum = buffer[5];
+            const domain = buffer[0];
+            const sender = buffer[1];
+            const receiver = buffer[2];
+            const command = buffer[3];
+            const arg = buffer[4];
+            const checksum = buffer[5];
 
-            let computedChecksum = calculateChecksum(buffer);
+            const computedChecksum = calculateChecksum(buffer);
             if (checksum === computedChecksum) {
                 let variable;
                 let value;
@@ -1110,7 +1110,7 @@ function decode(buffer, messageHandler, errorHandler) {
                     value = convertValue(command, arg);
                 }
 
-                let message = {
+                const message = {
                     domain: domain,
                     sender: sender,
                     receiver: receiver,
@@ -1142,13 +1142,13 @@ function decode(buffer, messageHandler, errorHandler) {
 // mainboard, and real panels do it.
 function encode(message, bufferHandler, errorHandler) {
     if (message !== undefined) {
-        let domain = message.domain;
-        let sender = message.sender;
-        let receiver = message.receiver;
-        let command = message.command;
-        let arg = message.arg;
+        const domain = message.domain;
+        const sender = message.sender;
+        const receiver = message.receiver;
+        const command = message.command;
+        const arg = message.arg;
 
-        let buffer = new Array(Constants.VALLOX_LENGTH);
+        const buffer = new Array(Constants.VALLOX_LENGTH);
         buffer[0] = domain;
         buffer[1] = sender;
         buffer[2] = receiver;
@@ -1168,11 +1168,11 @@ function encode(message, bufferHandler, errorHandler) {
 
 // converts a variable and value to a command and arg.
 function convert(variable, value) {
-    let command = getCommand(variable);
-    let arg = convertValueBack(command, value);
-    let readonly = isReadonly(command);
+    const command = getCommand(variable);
+    const arg = convertValueBack(command, value);
+    const readonly = isReadonly(command);
 
-    let result = {
+    const result = {
         command: command,
         arg: arg,
         readonly: readonly,

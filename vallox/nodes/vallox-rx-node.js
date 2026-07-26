@@ -9,57 +9,71 @@ const vallox = require('../vallox.js');
 // some flows build a plain array by hand. Accept all of those and reject anything else with a
 // message, rather than letting Buffer.concat throw out of an async handler and take the runtime
 // down with it.
+function isByte(value) {
+    return Number.isInteger(value) && value >= 0 && value <= 255;
+}
+
+function fromByteArray(payload) {
+    for (const value of payload) {
+        if (!isByte(value)) {
+            throw new Error('Payload contains a value that is not a byte: ' + JSON.stringify(value));
+        }
+    }
+
+    return Buffer.from(payload);
+}
+
+function fromByte(payload) {
+    if (!isByte(payload)) {
+        throw new Error('Payload is not a byte: ' + payload);
+    }
+
+    return Buffer.from([payload]);
+}
+
+function fromText(payload) {
+    let parsed;
+    try {
+        parsed = JSON.parse(payload);
+    } catch {
+        // Almost always a source that decoded the bytes as text. An MQTT node set to "auto-detect"
+        // does exactly this whenever a chunk happens to be valid UTF-8, and the conversion is
+        // lossy, so the bytes cannot be recovered from here.
+        const preview = Buffer.from(payload, 'binary').toString('hex').slice(0, 24);
+        throw new Error(
+            'Payload arrived as text (' +
+                payload.length +
+                ' chars, 0x' +
+                preview +
+                '), not bytes. Set the source node to deliver a Buffer' +
+                ' - on an MQTT node that is Output: "a Buffer", not "auto-detect".'
+        );
+    }
+
+    return toBuffer(parsed);
+}
+
 function toBuffer(payload) {
+    let bytes;
     if (Buffer.isBuffer(payload)) {
-        return payload;
-    }
-
-    if (payload instanceof Uint8Array) {
-        return Buffer.from(payload);
-    }
-
-    if (typeof payload === 'number') {
-        if (!Number.isInteger(payload) || payload < 0 || payload > 255) {
-            throw new Error('Payload is not a byte: ' + payload);
-        }
-        return Buffer.from([payload]);
-    }
-
-    if (typeof payload === 'string') {
-        let parsed;
-        try {
-            parsed = JSON.parse(payload);
-        } catch {
-            // Almost always a source that decoded the bytes as text. An MQTT node set to
-            // "auto-detect" does exactly this whenever a chunk happens to be valid UTF-8, and the
-            // conversion is lossy, so the bytes cannot be recovered from here.
-            const preview = Buffer.from(payload, 'binary').toString('hex').slice(0, 24);
-            throw new Error(
-                'Payload arrived as text (' +
-                    payload.length +
-                    ' chars, 0x' +
-                    preview +
-                    '), not bytes. Set the source node to deliver a Buffer' +
-                    ' - on an MQTT node that is Output: "a Buffer", not "auto-detect".'
-            );
-        }
-        return toBuffer(parsed);
-    }
-
-    if (Array.isArray(payload)) {
-        for (const value of payload) {
-            if (!Number.isInteger(value) || value < 0 || value > 255) {
-                throw new Error('Payload contains a value that is not a byte: ' + JSON.stringify(value));
-            }
-        }
-        return Buffer.from(payload);
-    }
-
-    if (payload === undefined || payload === null) {
+        bytes = payload;
+    } else if (payload instanceof Uint8Array) {
+        bytes = Buffer.from(payload);
+    } else if (Array.isArray(payload)) {
+        bytes = fromByteArray(payload);
+    } else if (typeof payload === 'string') {
+        bytes = fromText(payload);
+    } else if (typeof payload === 'number') {
+        bytes = fromByte(payload);
+    } else if (payload === undefined || payload === null) {
         throw new Error('Payload is empty.');
+    } else {
+        throw new Error(
+            'Payload must be a Buffer, an array of bytes or a string holding one, got ' + typeof payload + '.'
+        );
     }
 
-    throw new Error('Payload must be a Buffer, an array of bytes or a string holding one, got ' + typeof payload + '.');
+    return bytes;
 }
 
 // The vallox receiver node.
@@ -68,7 +82,7 @@ module.exports = function (RED) {
 
     function ValloxRxNode(config) {
         RED.nodes.createNode(this, config);
-        let node = this;
+        const node = this;
 
         // Diagnostics. Off by default; nothing below runs unless the node is configured for it.
         const debugEnabled = config.debug === true || config.debug === 'true';
@@ -161,7 +175,7 @@ module.exports = function (RED) {
                     continue;
                 }
 
-                let offsetEnd = i + vallox.constants.VALLOX_LENGTH;
+                const offsetEnd = i + vallox.constants.VALLOX_LENGTH;
                 if (offsetEnd > buffer.length) {
                     // start of a frame that has not arrived in full yet
                     return undefined;
@@ -212,48 +226,23 @@ module.exports = function (RED) {
             }
         };
 
-        this.on('input', async function (msg) {
-            // Nothing below may throw: this handler is async, so an exception escaping it becomes
-            // an unhandled rejection and stops the whole Node-RED process.
-            let bytes;
-            try {
-                bytes = toBuffer(msg.payload);
-            } catch (error) {
-                stats.badPayloads++;
-                node.status({
-                    fill: 'red',
-                    shape: 'ring',
-                    text: error.message,
-                });
-
-                node.warn(error.message);
-                node.send([null, Object.assign({}, msg, { payload: error.message })]);
-                return;
-            }
-
-            stats.chunks++;
-            stats.bytes += bytes.length;
-            capture(bytes);
-            trace('rx ' + bytes.length + ' bytes: ' + hex(bytes));
-            node.enqueue(bytes);
-
+        // Drain every complete frame the buffer now holds.
+        this.drain = function (msg) {
             for (;;) {
-                let next = node.peek();
+                const next = node.peek();
                 if (next === undefined) {
                     break;
                 }
 
-                let decoded = false;
                 vallox.decode(
                     next.candidate,
                     function (message) {
-                        decoded = true;
                         // Annex B: a write telegram is followed by its checksum a second time
                         // ("this last message MUST be followed by sending its CHECKSUM twice").
                         // Real panels do this, so tolerate the repeat instead of resynchronising
                         // through it. Only when the byte cannot itself begin a frame, otherwise a
                         // following frame whose checksum happens to match would be eaten.
-                        let repeated = node.hasRepeatedChecksum(next.skipped);
+                        const repeated = node.hasRepeatedChecksum(next.skipped);
                         node.consume(next.skipped + vallox.constants.VALLOX_LENGTH + (repeated ? 1 : 0));
                         node.reportSkipped(next.skipped);
                         stats.frames++;
@@ -297,15 +286,35 @@ module.exports = function (RED) {
                         node.send([null, Object.assign({}, msg, { payload: errorMessage })]);
                     }
                 );
-
-                // decode is synchronous; guard against a future change that makes it not so
-                if (!decoded && buffer !== undefined && buffer.length >= vallox.constants.VALLOX_LENGTH) {
-                    continue;
-                }
             }
+        };
 
-            // in debug mode the status carries the counters rather than the last event
-            showStats();
+        this.on('input', async function (msg) {
+            // Nothing may escape this handler: it is async, so an exception becomes an unhandled
+            // rejection and stops the whole Node-RED process. The status is refreshed in `finally`
+            // so a rejected payload still updates the counters.
+            try {
+                const bytes = toBuffer(msg.payload);
+                stats.chunks++;
+                stats.bytes += bytes.length;
+                capture(bytes);
+                trace('rx ' + bytes.length + ' bytes: ' + hex(bytes));
+                node.enqueue(bytes);
+                node.drain(msg);
+            } catch (error) {
+                stats.badPayloads++;
+                node.status({
+                    fill: 'red',
+                    shape: 'ring',
+                    text: error.message,
+                });
+
+                node.warn(error.message);
+                node.send([null, Object.assign({}, msg, { payload: error.message })]);
+            } finally {
+                // in debug mode the status carries the counters rather than the last event
+                showStats();
+            }
         });
 
         this.on('close', function (done) {

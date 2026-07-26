@@ -20,6 +20,12 @@ module.exports = [
             'no-unused-vars': ['warn', { args: 'none' }],
             'no-empty': ['error', { allowEmptyCatch: true }],
             'no-constant-condition': ['error', { checkLoops: false }],
+            // From node-red-standards. The rest of that section - preconditions first, most likely
+            // case next, one exit from the body, trailing work in finally, no defensive checks - has
+            // no core rule and is enforced by review.
+            'no-var': 'error',
+            'prefer-const': 'warn',
+            'max-statements-per-line': ['warn', { max: 1 }],
         },
     },
     {

@@ -250,6 +250,32 @@ describe('valloxrx node', function () {
             });
         });
 
+        it('refreshes the counters even when the payload is rejected', function (t, done) {
+            // The status update is the handler's epilogue and lives in `finally`. An early return on
+            // the rejection path used to skip it, leaving the counters stale until the next good
+            // chunk - the defect the "trailing work belongs in finally" rule exists to prevent.
+            loadWith({ debug: true }, ({ n1 }) => {
+                const texts = [];
+                n1.status = function (status) {
+                    if (status && status.text) {
+                        texts.push(status.text);
+                    }
+                };
+                n1.receive({ payload: { rubbish: true } });
+                setTimeout(() => {
+                    try {
+                        assert.ok(
+                            texts.some((t2) => /frames/.test(t2)),
+                            'expected the counter status, got: ' + JSON.stringify(texts)
+                        );
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                }, 60);
+            });
+        });
+
         it('reports an unwritable capture path instead of throwing', function (t, done) {
             loadWith(
                 { debug: true, capturefile: path.join(os.tmpdir(), 'no-such-dir-xyz', 'c.bin') },

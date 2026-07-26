@@ -4,17 +4,21 @@
 
 const vallox = require('../vallox.js');
 
+function isByte(value) {
+    return Number.isInteger(value) && value >= 0 && value <= 255;
+}
+
 // The vallox node.
 module.exports = function (RED) {
     'use strict';
 
     function ValloxNode(config) {
         RED.nodes.createNode(this, config);
-        let node = this;
-        let sendOnNewData = config.sendonnewdata;
-        let receiver = config.receiver & 0xff;
-        let receiverGroup = receiver & 0xf0;
-        let state = {
+        const node = this;
+        const sendOnNewData = config.sendonnewdata;
+        const receiver = config.receiver & 0xff;
+        const receiverGroup = receiver & 0xf0;
+        const state = {
             Receiver: receiver,
         };
 
@@ -40,56 +44,48 @@ module.exports = function (RED) {
         const writeAsPanel = config.writesequence === undefined || config.writesequence === true;
 
         this.createMessage = function (request, variable, value, messageHandler, errorHandler) {
-            let sender = receiver;
-            let result = vallox.convert(variable, value);
-            let command = result.command;
-            let arg = result.arg;
+            const result = vallox.convert(variable, value);
+            const reading = request === vallox.constants.VALLOX_GET;
 
-            if (command === undefined) {
+            if (result.command === undefined) {
                 errorHandler('Unknown variable ' + variable + '.');
                 return;
             }
-
-            let message = {
-                domain: vallox.constants.VALLOX_DOMAIN,
-                sender: sender,
-                receiver: vallox.constants.VALLOX_MASTER,
-                command: command,
-                arg: arg,
-            };
-
-            if (request === vallox.constants.VALLOX_GET) {
-                // A read request carries 0x00 in the command byte and the register being asked
-                // for in the argument. See "request / response principle" in the protocol doc.
-                message.command = vallox.variables.GET;
-                message.arg = command;
-                messageHandler(message);
-                return;
-            }
-
-            if (result.readonly) {
+            if (!reading && result.readonly) {
                 errorHandler('Variable ' + variable + ' is readonly.');
                 return;
             }
-
-            if (!Number.isInteger(arg) || arg < 0 || arg > 255) {
-                errorHandler('Value for ' + variable + ' does not encode to a byte: ' + arg + '.');
+            if (!reading && !isByte(result.arg)) {
+                errorHandler('Value for ' + variable + ' does not encode to a byte: ' + result.arg + '.');
                 return;
             }
 
-            if (!writeAsPanel) {
-                message.repeatChecksum = true;
-                messageHandler(message);
-                return;
+            const message = {
+                domain: vallox.constants.VALLOX_DOMAIN,
+                sender: receiver,
+                receiver: vallox.constants.VALLOX_MASTER,
+                command: result.command,
+                arg: result.arg,
+            };
+
+            let telegrams;
+            if (reading) {
+                // A read request carries 0x00 in the command byte and the register being asked for
+                // in the argument. See "request / response principle" in the protocol doc.
+                telegrams = [Object.assign({}, message, { command: vallox.variables.GET, arg: result.command })];
+            } else if (writeAsPanel) {
+                telegrams = WRITE_SEQUENCE.map((step) => Object.assign({}, message, step));
+            } else {
+                telegrams = [Object.assign({}, message, { repeatChecksum: true })];
             }
 
-            for (const step of WRITE_SEQUENCE) {
-                messageHandler(Object.assign({}, message, step));
+            for (const telegram of telegrams) {
+                messageHandler(telegram);
             }
         };
 
         this.on('input', async function (msg) {
-            let message = msg.payload;
+            const message = msg.payload;
             if (message !== undefined) {
                 // Input from RX node
                 if (Object.prototype.hasOwnProperty.call(message, 'receiver')) {
@@ -105,8 +101,8 @@ module.exports = function (RED) {
 
                     if (message.receiver === receiver || message.receiver === receiverGroup) {
                         if (message.request === vallox.constants.VALLOX_SET) {
-                            let variable = message.variable;
-                            let value = message.value;
+                            const variable = message.variable;
+                            const value = message.value;
                             state[variable] = value;
                             newData = true;
                         }
@@ -117,12 +113,12 @@ module.exports = function (RED) {
                         node.send([msg]);
                     }
                 } else if (Object.prototype.hasOwnProperty.call(message, 'request')) {
-                    let request = message.request;
-                    let variable = message.variable;
-                    let value = message.value;
+                    const request = message.request;
+                    const variable = message.variable;
+                    const value = message.value;
 
                     if (isSuspended()) {
-                        let errorMessage = 'Bus transmission is suspended (91H): ' + variable + ' not sent.';
+                        const errorMessage = 'Bus transmission is suspended (91H): ' + variable + ' not sent.';
                         node.warn(errorMessage);
                         msg.payload = errorMessage;
                         node.send([null, null, msg]);

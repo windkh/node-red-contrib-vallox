@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.33]
+
+### Adopt the redrafted code-style rules from node-red-standards 0.3.0
+
+The standard's "single exit — exactly one `return`, as the final statement" rule was replaced by four
+narrower ones: preconditions first, most likely case next, one exit from the body, and trailing work
+in `finally`. Plus: no defensive programming. This release brings the code into line.
+
+- **Fixed a real defect the new wording targets.** The input handler's epilogue — the diagnostics
+  status — sat after the framing loop, and the early return on a rejected payload skipped it, so the
+  counters went stale until the next good chunk. It now lives in `finally`. Covered by a test, and
+  verified by reverting the fix and watching that test fail.
+- Removed a defensive guard in `valloxrx` that checked whether `vallox.decode` had called back
+  synchronously "in case a future change makes it not so". It was the last statement in a loop body,
+  so the `continue` could never do anything — dead code guarding against a hypothetical.
+- `toBuffer` reads in order of likelihood now: `Buffer` (what a serial port delivers) first, then the
+  rarer shapes, with the per-shape checks extracted into `fromByteArray` / `fromByte` / `fromText`.
+  One exit, no nesting.
+- `createMessage` puts its three preconditions at the top, then builds the telegram list once and
+  emits it in a single loop, rather than returning from four places in the body.
+- Enabled the enforceable rules — `no-var` (error), `prefer-const` (warn), `max-statements-per-line`
+  — and cleared all 64 findings, all of which were `let` that never gets reassigned.
+- `npm run lint` and `lint:fix` now cover `tools/` and `eslint.config.js`; the analyser had never been
+  linted, which is how the dead assignment in it survived.
+
 ## [0.1.32]
 
 ### Sync node-red-standards 0.2.1 and run npm audit fix

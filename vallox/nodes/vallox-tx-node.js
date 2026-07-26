@@ -10,7 +10,7 @@ module.exports = function (RED) {
 
     function ValloxTxNode(config) {
         RED.nodes.createNode(this, config);
-        let node = this;
+        const node = this;
 
         this.on('input', async function (msg) {
             vallox.encode(
