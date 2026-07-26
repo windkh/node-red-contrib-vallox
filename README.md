@@ -120,7 +120,12 @@ Holds the in-memory state of one Vallox device (panel or master) and generates o
     - Panel 1-7: `33`-`39` (0x21-0x27)
     - LON: `40` (0x28)
     - Master 1: `17` (0x11)
+
+    This address is **also the sender address of every telegram the node emits**, so it must not be
+    one your hardware already uses. See [Bus addressing](#bus-addressing) below.
+
 - **Send msg on new data** — when checked, output 1 fires every time a matching `SET` frame updates the state.
+- **Write like a panel** — a `SET` produces the three telegrams a real control unit sends (mainboard with the checksum repeated, then all panels, then all mainboards). Unticking sends only the first; the master propagates the change itself.
 
 **Inputs** (one of three shapes on `msg.payload`):
 
@@ -135,6 +140,57 @@ Holds the in-memory state of one Vallox device (panel or master) and generates o
 3. Error string — e.g. an attempt to `SET` a readonly variable.
 
 See [`examples/vallox.json`](examples/vallox.json) for a complete RX + state + TX + MQTT flow.
+
+# Bus addressing
+
+The protocol assigns each module an address: mainboards `11H`-`1FH` (1-15), panels and remote
+controls `21H`-`2FH` (1-15). `10H` addresses all mainboards at once and `20H` all panels. The
+**vallox** node's _Receiver_ setting is both the address whose traffic it adopts and the address it
+sends from — it impersonates a panel.
+
+## Do not use an address your own panels occupy
+
+The original Vallox control unit ships as **Panel 1 (`21H` / `33`)**, and each additional panel takes
+the next address: `22H`, `23H`, and so on. Those are exactly the values at the top of the _Receiver_
+dropdown, so the default choice is usually the wrong one.
+
+Two modules answering to one address is not a configuration error the bus detects. Both consume the
+master's replies to that address, both may transmit as it, and because a write is broadcast to all
+panels and all mainboards, a duplicate address propagates confusion rather than containing it.
+
+**Pick an address no physical device uses** — the far end of the range (`27H` / `39`, Panel 7) is a
+reasonable default for a single Node-RED instance. To see which addresses are taken, tick
+_Diagnostics_ on the **valloxrx** node, capture a minute of traffic and look at the senders:
+
+```text
+node tools/analyse-capture.js C:\temp\vallox.bin
+```
+
+The capture also tells you what to expect: a two-panel system typically shows `panel 1`, `panel 2`
+and `mainboard 1` talking, and nothing else.
+
+## Too many transmitters cause collisions
+
+The bus is a single pair shared by up to 32 modules, and nothing arbitrates access — a module
+transmits when it has something to say. Two modules starting at once corrupt each other's bytes, and
+the protocol's only recovery is the requester's own retry: it waits 10 ms for a reply, repeats the
+request up to ten times, and then **puts itself into a fault state**. Corrupted frames therefore cost
+more than the frame; they cost bus time that makes further collisions likelier.
+
+Every panel already polls the master continuously, so the bus is busy before you add anything. In a
+measured capture the damage rate roughly doubled — one bad frame per 317 bytes against one per 760 —
+while a panel was writing setpoints, purely because more modules were transmitting.
+
+Practical consequences:
+
+- **Add as few transmitters as you can.** One Node-RED node per system, not one per dashboard.
+- **Poll sparingly.** One `GET` every few seconds covers a rotation of registers; the panels' own
+  polling fills in the rest. A tight loop of `GET`s is the easiest way to make a quiet bus noisy.
+- **Prefer the broadcasts where they exist.** `Humidity`, both CO2 bytes and the four temperatures
+  arrive every 12 seconds unasked — polling them adds traffic for nothing.
+- **Expect occasional checksum errors and let the retry work.** A frame lost to a collision reappears
+  on the next poll; treat a persistent rate as a wiring problem (termination, biasing, stub length),
+  not something to fix by polling harder.
 
 # Example: setting the fan speed
 

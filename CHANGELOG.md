@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.31]
+
+### Document bus addressing and collisions
+
+- New "Bus addressing" section in `README.md`. It spells out that the original Vallox control unit is
+  **Panel 1 (`21H` / `33`)** and further panels take `22H`, `23H` … in order — which are the first
+  entries in the _Receiver_ dropdown, so the default choice is usually a clash. A duplicate address is
+  not detected by the bus: both modules consume the master's replies and both may transmit, and since
+  a write is broadcast to all panels and all mainboards it spreads rather than contains the problem.
+- The same section explains why the number of transmitters matters: up to 32 modules share one pair
+  with no arbitration, and a collision costs more than the frame, because the requester retries for
+  10 ms up to ten times before entering a fault state. Includes the measured figures — one bad frame
+  per 317 bytes while a panel was writing, against one per 760 on an idle bus — and practical advice
+  on polling sparingly, using the seven broadcast registers, and treating a persistent error rate as
+  a wiring fault.
+- The `vallox` node's help text carries the short version, and the _Receiver_ entry now documents that
+  it is the sender address too.
+
 ## [0.1.30]
 
 ### Write a register the way a real control unit does

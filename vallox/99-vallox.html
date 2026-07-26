@@ -211,7 +211,7 @@
         <dt>Description <span class="property-type">string</span></dt>
         <dd>Label shown on the node.</dd>
         <dt>Receiver <span class="property-type">number</span></dt>
-        <dd>RS485 address of the panel or master this node represents (Panel 1 = 33 / 0x21 &hellip; Panel 7 = 39 / 0x27, LON = 40 / 0x28, Master 1 = 17 / 0x11). This address is also used as the <em>sender</em> of outgoing telegrams, so pick one that no physical panel already uses &mdash; two devices answering to the same address will collide.</dd>
+        <dd>RS485 address of the panel or master this node represents (Panel 1 = 33 / 0x21 &hellip; Panel 7 = 39 / 0x27, LON = 40 / 0x28, Master 1 = 17 / 0x11). This address is also used as the <em>sender</em> of outgoing telegrams, so it must not be one your own hardware uses. <strong>The original Vallox control unit is Panel 1 (33), and further panels take 34, 35 &hellip; in order</strong> &mdash; so the top of this list is usually the wrong choice. Pick a free address such as Panel 7, and add as few transmitters to the bus as you can: nothing arbitrates access, so every extra sender makes collisions likelier. See "Bus addressing" in the README.</dd>
         <dt>Send msg on new data <span class="property-type">boolean</span></dt>
         <dd>If checked, output 1 fires every time a matching <code>SET</code> frame updates the state; otherwise output 1 only fires on an explicit query.</dd>
         <dt>Write like a panel <span class="property-type">boolean</span></dt>
