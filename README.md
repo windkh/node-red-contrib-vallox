@@ -27,7 +27,8 @@ adapter, or an MQTT bridge.
 
 # Dependencies
 
-This package depends on the following libraries
+None at runtime — the nodes ship no third-party code and the RS485 protocol is implemented in
+this package. See Requirements above for the companion node that provides the byte stream.
 
 # Disclaimer
 

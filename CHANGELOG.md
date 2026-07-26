@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.21]
+
+### Advisory forward-compat CI job
+
+- Added a second CI job that installs `node-red@latest` over the pinned floor and runs the suite, so a breaking Node-RED release shows up here instead of in an issue. It is `continue-on-error`, because the devDependency deliberately stays on the declared floor and this must not gate a merge. Verified locally: all 61 tests pass against Node-RED 5.0.1.
+- Filled the empty "Dependencies" section in `README.md` — the package has no runtime dependencies.
+
 ## [0.1.20]
 
 ### Declare a real minimum Node-RED version

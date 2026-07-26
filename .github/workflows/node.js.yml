@@ -1,4 +1,6 @@
 # Run lint, format check, unit tests and the coverage gate on every push and PR to main.
+# `build` tests the supported floor (see `node-red.version` in package.json); `forward-compat`
+# additionally tries the newest Node-RED release and is advisory only.
 # See https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
@@ -30,3 +32,23 @@ jobs:
             - run: npm run format:check
             - run: npm test
             - run: npm run coverage:check
+
+    forward-compat:
+        # Early warning that a new Node-RED release breaks the nodes. Advisory: the devDependency
+        # deliberately stays on the declared floor, so this job must not gate a merge.
+        name: Latest Node-RED (advisory)
+        runs-on: ubuntu-latest
+        continue-on-error: true
+
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24.x
+                  cache: 'npm'
+            - run: npm ci
+            - name: Install the newest Node-RED over the pinned floor
+              run: npm install --no-save node-red@latest
+            - name: Report the version under test
+              run: node -p "'node-red ' + require('node-red/package.json').version"
+            - run: npm test
