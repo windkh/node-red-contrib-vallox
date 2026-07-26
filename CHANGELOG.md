@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.36]
+
+### Only show the heat-recovery efficiency when it means something
+
+The dashboard reported 150 %. The formula is not wrong — it is the standard definition and the same
+one the `valloxserial` Arduino library uses:
+
+    Wirkungsgrad Zuluft = (Zuluft − Außenluft) / (Abluft − Außenluft)
+
+But it is only meaningful while the extract air is clearly warmer than outside. In summer the
+denominator goes small or negative and the result is nonsense: 28 °C outside, 24 °C extract and
+22 °C supply gives exactly 150 %. The sensors resolve about 1 K, so with a 2 K span one degree of
+measurement error moves the result by 50 percentage points.
+
+- The efficiency function now requires at least a 3 K difference between extract and outdoor air and
+  shows `-` below that, rather than a number nobody can use.
+- A value above 100 % is legitimate when the post-heater is running, and the comment in the flow says
+  so, so it is not mistaken for a fault.
+- Tested by running the shipped function body against winter and summer temperature sets, including
+  the exact 150 % case.
+
 ## [0.1.35]
 
 ### Rework the dashboard example after trying it on a real system
