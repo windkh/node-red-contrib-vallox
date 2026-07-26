@@ -22,6 +22,17 @@ module.exports = function (RED) {
             Receiver: receiver,
         };
 
+        // Which frames update the cache. A mainboard reporting a register is reporting the same
+        // value whoever asked for it, so those are taken whatever the recipient is - that is how a
+        // node picks up everything the physical panels poll for, without polling itself. Beyond
+        // that, anything addressed to this node or to its group counts.
+        const MAINBOARD_GROUP = 0x10;
+        const describes = function (message) {
+            const fromMainboard = (message.sender & 0xf0) === MAINBOARD_GROUP;
+            const addressedHere = message.receiver === receiver || message.receiver === receiverGroup;
+            return fromMainboard || addressedHere;
+        };
+
         // 91H prohibits modules from sending on the bus, 8FH allows it again. The unit issues
         // these around CO2 sensor interaction. Transmitting while suspended is a protocol
         // violation, so requests are rejected until traffic resumes. A missed 8FH would
@@ -99,13 +110,12 @@ module.exports = function (RED) {
                         suspendedUntil = 0;
                     }
 
-                    if (message.receiver === receiver || message.receiver === receiverGroup) {
-                        if (message.request === vallox.constants.VALLOX_SET) {
-                            const variable = message.variable;
-                            const value = message.value;
-                            state[variable] = value;
-                            newData = true;
-                        }
+                    // a GET carries no value, so only SET-shaped frames update anything
+                    if (message.request === vallox.constants.VALLOX_SET && describes(message)) {
+                        const variable = message.variable;
+                        const value = message.value;
+                        state[variable] = value;
+                        newData = true;
                     }
 
                     if (newData && sendOnNewData) {

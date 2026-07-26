@@ -78,10 +78,20 @@ flowchart TD
 
 ### Address matching
 
-A frame is accepted when `message.receiver` equals the configured address **or** its group, where
-the group is the high nibble (`receiver & 0xf0`). A node configured as panel 1 (`0x21`) therefore
-also absorbs frames broadcast to all panels (`0x20`). Frames addressed elsewhere are dropped
-without comment.
+A frame updates the cache when either holds:
+
+- **it comes from a mainboard** — `sender & 0xf0 === 0x10`, so `10H`-`1FH` — whatever the recipient
+  is, or
+- **it is addressed here**: `message.receiver` equals the configured address or its group, the group
+  being the high nibble (`receiver & 0xf0`), so a node at `0x21` also takes broadcasts to `0x20`.
+
+The first rule is what makes a single node see the whole system. The master answers every panel's
+poll individually, and the value it reports is the same value whoever asked for it — so the node
+learns everything the physical panels poll for without adding traffic of its own. A captured minute
+held 130 requests and their replies; matching only on the recipient discarded nearly all of them.
+
+Frames between two other modules — panel 3 writing to panel 2 — are ignored, as are `GET` requests,
+which carry no value.
 
 ### Why the readonly branch returns
 

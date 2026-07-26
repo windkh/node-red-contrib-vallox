@@ -221,7 +221,8 @@
 </script>
 
 <script type="text/x-red" data-help-name="vallox">
-    <p>Maintains the in-memory state of a Vallox device and produces request telegrams. The node listens for decoded frames addressed to its configured receiver (or that receiver's group) and stores each <code>SET</code> value under its human-readable variable name (e.g. <code>FanSpeed</code>, <code>TemperatureOutside</code>).</p>
+    <p>Maintains the in-memory state of a Vallox device and produces request telegrams. Each <code>SET</code> value is stored under its human-readable variable name (e.g. <code>FanSpeed</code>, <code>TemperatureOutside</code>).</p>
+    <p>A frame updates the cache when it comes <b>from a mainboard</b> (<code>10H</code>-<code>1FH</code>), whoever it is addressed to, or when it is addressed to this node or to its address group. A register value is the same value whichever panel asked for it, so the node learns everything the physical panels poll for without polling itself. Frames between two other modules are ignored.</p>
 
     <h3>Configuration</h3>
     <dl class="message-properties">

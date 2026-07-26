@@ -2,7 +2,7 @@
     {
         "id": "300009e3779b1",
         "type": "ui_tab",
-        "name": "Lüftung",
+        "name": "Ventilation",
         "icon": "fa-fan",
         "disabled": false,
         "hidden": false
@@ -10,7 +10,7 @@
     {
         "id": "300013c6ef362",
         "type": "ui_group",
-        "name": "Temperaturen",
+        "name": "Temperatures",
         "tab": "300009e3779b1",
         "order": 1,
         "disp": true,
@@ -20,7 +20,7 @@
     {
         "id": "30001daa66d13",
         "type": "ui_group",
-        "name": "Auswertung",
+        "name": "Fan control",
         "tab": "300009e3779b1",
         "order": 2,
         "disp": true,
@@ -30,7 +30,7 @@
     {
         "id": "3000278dde6c4",
         "type": "ui_group",
-        "name": "Lüftungskontrolle",
+        "name": "Status",
         "tab": "300009e3779b1",
         "order": 3,
         "disp": true,
@@ -40,7 +40,7 @@
     {
         "id": "3000317156075",
         "type": "ui_group",
-        "name": "Status",
+        "name": "Warnings",
         "tab": "300009e3779b1",
         "order": 4,
         "disp": true,
@@ -50,7 +50,7 @@
     {
         "id": "30003b54cda26",
         "type": "ui_group",
-        "name": "Warnungen",
+        "name": "Settings",
         "tab": "300009e3779b1",
         "order": 5,
         "disp": true,
@@ -58,17 +58,7 @@
         "collapse": false
     },
     {
-        "id": "30004538453d7",
-        "type": "ui_group",
-        "name": "Einstellungen",
-        "tab": "300009e3779b1",
-        "order": 6,
-        "disp": true,
-        "width": 6,
-        "collapse": false
-    },
-    {
-        "id": "30008a708a7ae",
+        "id": "3000808d12dfd",
         "type": "comment",
         "z": "e1a2b3c4d5f60003",
         "name": "Wire your serial in / mqtt in (Output: a Buffer) into valloxrx",
@@ -78,7 +68,7 @@
         "wires": []
     },
     {
-        "id": "30004f1bbcd88",
+        "id": "30004538453d7",
         "type": "valloxrx",
         "z": "e1a2b3c4d5f60003",
         "name": "",
@@ -89,15 +79,15 @@
         "y": 80,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ],
             [
-                "30006cc623a9b"
+                "300062e2ac0ea"
             ]
         ]
     },
     {
-        "id": "300058ff34739",
+        "id": "30004f1bbcd88",
         "type": "vallox",
         "z": "e1a2b3c4d5f60003",
         "name": "Panel 7",
@@ -109,37 +99,36 @@
         "y": 80,
         "wires": [
             [
-                "300094540215f",
-                "3000a81af14c1",
-                "3000bbe1e0823",
-                "3000cfa8cfb85",
-                "3000e36fbeee7",
-                "30010afd9d5ab",
-                "300128a8042be",
-                "300177c3c1046",
+                "30008a708a7ae",
+                "30009e3779b10",
+                "3000b1fe68e72",
+                "3000c5c5581d4",
+                "3000d98c47536",
+                "3000f736ae249",
+                "300146526afd1",
+                "300163fcd1ce4",
+                "300181a7389f7",
                 "3001956e27d59",
-                "3001b3188ea6c",
-                "3001c6df7ddce",
-                "3001daa66d130",
-                "3001ee6d5c492",
+                "3001a935170bb",
+                "3001bcfc0641d",
+                "3001d0c2f577f",
+                "3001e489e4ae1",
                 "300202344b7f4",
-                "300215fb3ab56",
-                "300233a5a1869",
-                "300251500857c",
-                "30026efa6f28f",
-                "30028ca4d5fa2",
-                "3002aa4f3ccb5",
-                "3002c7f9a39c8",
-                "3002e5a40a6db"
+                "30021fdeb2507",
+                "30023d891921a",
+                "30025b337ff2d",
+                "300278dde6c40",
+                "300296884d953",
+                "3002b432b4666"
             ],
             [
-                "300062e2ac0ea"
+                "300058ff34739"
             ],
             []
         ]
     },
     {
-        "id": "300062e2ac0ea",
+        "id": "300058ff34739",
         "type": "valloxtx",
         "z": "e1a2b3c4d5f60003",
         "name": "",
@@ -149,18 +138,18 @@
         "y": 80,
         "wires": [
             [
-                "300076a99b44c"
+                "30006cc623a9b"
             ],
             [
-                "3000808d12dfd"
+                "300076a99b44c"
             ]
         ]
     },
     {
-        "id": "300076a99b44c",
+        "id": "30006cc623a9b",
         "type": "debug",
         "z": "e1a2b3c4d5f60003",
-        "name": "Bytes auf den Bus - hier serial out / mqtt out einsetzen",
+        "name": "bytes to the bus - put serial out / mqtt out here",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -174,10 +163,10 @@
         "wires": []
     },
     {
-        "id": "30006cc623a9b",
+        "id": "300062e2ac0ea",
         "type": "debug",
         "z": "e1a2b3c4d5f60003",
-        "name": "Dekodierfehler",
+        "name": "decode error",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -191,10 +180,10 @@
         "wires": []
     },
     {
-        "id": "3000808d12dfd",
+        "id": "300076a99b44c",
         "type": "debug",
         "z": "e1a2b3c4d5f60003",
-        "name": "Kodierfehler",
+        "name": "encode error",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -208,10 +197,10 @@
         "wires": []
     },
     {
-        "id": "300094540215f",
+        "id": "30008a708a7ae",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Zustand merken",
+        "name": "remember state",
         "rules": [
             {
                 "t": "set",
@@ -233,15 +222,15 @@
         ]
     },
     {
-        "id": "30009e3779b10",
+        "id": "300094540215f",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
         "group": "300013c6ef362",
         "order": 1,
         "width": 0,
         "height": 0,
-        "name": "Außenlufttemperatur",
-        "label": "Außenlufttemperatur",
+        "name": "Outside air",
+        "label": "Outside air",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -250,7 +239,7 @@
         "wires": []
     },
     {
-        "id": "3000a81af14c1",
+        "id": "30009e3779b10",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "TemperatureOutside",
@@ -272,20 +261,20 @@
         "y": 160,
         "wires": [
             [
-                "30009e3779b10"
+                "300094540215f"
             ]
         ]
     },
     {
-        "id": "3000b1fe68e72",
+        "id": "3000a81af14c1",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
         "group": "300013c6ef362",
         "order": 2,
         "width": 0,
         "height": 0,
-        "name": "Zulufttemperatur",
-        "label": "Zulufttemperatur",
+        "name": "Supply air",
+        "label": "Supply air",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -294,7 +283,7 @@
         "wires": []
     },
     {
-        "id": "3000bbe1e0823",
+        "id": "3000b1fe68e72",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "TemperatureIncoming",
@@ -316,20 +305,20 @@
         "y": 200,
         "wires": [
             [
-                "3000b1fe68e72"
+                "3000a81af14c1"
             ]
         ]
     },
     {
-        "id": "3000c5c5581d4",
+        "id": "3000bbe1e0823",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
         "group": "300013c6ef362",
         "order": 3,
         "width": 0,
         "height": 0,
-        "name": "Ablufttemperatur",
-        "label": "Ablufttemperatur",
+        "name": "Extract air",
+        "label": "Extract air",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -338,7 +327,7 @@
         "wires": []
     },
     {
-        "id": "3000cfa8cfb85",
+        "id": "3000c5c5581d4",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "TemperatureInside",
@@ -360,20 +349,20 @@
         "y": 240,
         "wires": [
             [
-                "3000c5c5581d4"
+                "3000bbe1e0823"
             ]
         ]
     },
     {
-        "id": "3000d98c47536",
+        "id": "3000cfa8cfb85",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
         "group": "300013c6ef362",
         "order": 4,
         "width": 0,
         "height": 0,
-        "name": "Fortlufttemperatur",
-        "label": "Fortlufttemperatur",
+        "name": "Exhaust air",
+        "label": "Exhaust air",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -382,7 +371,7 @@
         "wires": []
     },
     {
-        "id": "3000e36fbeee7",
+        "id": "3000d98c47536",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "TemperatureExhaust",
@@ -404,89 +393,12 @@
         "y": 280,
         "wires": [
             [
-                "3000d98c47536"
+                "3000cfa8cfb85"
             ]
         ]
     },
     {
-        "id": "3000ed5336898",
-        "type": "ui_text",
-        "z": "e1a2b3c4d5f60003",
-        "group": "30001daa66d13",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "name": "Wirkungsgrad Zuluft",
-        "label": "Wirkungsgrad Zuluft",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "x": 920,
-        "y": 320,
-        "wires": []
-    },
-    {
-        "id": "3000f736ae249",
-        "type": "ui_text",
-        "z": "e1a2b3c4d5f60003",
-        "group": "30001daa66d13",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "name": "Wirkungsgrad Abluft",
-        "label": "Wirkungsgrad Abluft",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "x": 920,
-        "y": 360,
-        "wires": []
-    },
-    {
-        "id": "3001011a25bfa",
-        "type": "ui_text",
-        "z": "e1a2b3c4d5f60003",
-        "group": "30001daa66d13",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "name": "Wirkungsgrad Mittel",
-        "label": "Wirkungsgrad Mittel",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "x": 920,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "30010afd9d5ab",
-        "type": "function",
-        "z": "e1a2b3c4d5f60003",
-        "name": "Wirkungsgrad",
-        "func": "// Kein Register: der Wirkungsgrad wird aus den vier Temperaturen berechnet.\n//     Wirkungsgrad Zuluft = (Zuluft - Außenluft) / (Abluft - Außenluft)\n// Das ist die übliche Definition und auch die Rechnung der valloxserial-Bibliothek.\n//\n// Sie gilt nur, solange die Wärme wirklich über den Kreuzstromtauscher zurückgewonnen\n// wird. Zwei Fälle liefern sonst Unsinn:\n//\n//  1. Bypass offen (Klappe auf Sommer): die Luft geht am Tauscher vorbei, es gibt\n//     keinen Wirkungsgrad zu berechnen.\n//  2. Kleine Spanne: der Nenner (Abluft - Außenluft) wird im Sommer klein oder negativ.\n//     Bei 28 °C außen, 24 °C Abluft und 22 °C Zuluft kommen genau 150 % heraus. Die\n//     NTC-Sensoren lösen nur etwa 1 K auf, bei 2 K Spanne verschiebt ein Grad\n//     Messfehler das Ergebnis um 50 Prozentpunkte.\nconst MIN_SPAN = 3; // Kelvin\n\nconst s = msg.payload;\nconst needed = [s.TemperatureInside, s.TemperatureOutside, s.TemperatureIncoming, s.TemperatureExhaust];\nconst span = s.TemperatureInside - s.TemperatureOutside;\n// 08H Bit 1: 0 = Winter, 1 = Sommer/Bypass offen\nconst bypassOpen = (s.IoPortMultiPurpose2 || {}).DamperMotorPosition === true;\nlet result = null;\n\nif (needed.some((v) => v === undefined)) {\n    result = null;\n} else if (bypassOpen || span < MIN_SPAN) {\n    const hint = { payload: bypassOpen ? \"Bypass offen\" : \"-\" };\n    result = [hint, hint, hint];\n} else {\n    const zu = ((s.TemperatureIncoming - s.TemperatureOutside) * 100) / span;\n    const ab = ((s.TemperatureInside - s.TemperatureExhaust) * 100) / span;\n    // über 100 % heißt: die Nachheizung wärmt die Zuluft zusätzlich auf\n    const pct = (v) => Math.round(v) + \" %\";\n    result = [{ payload: pct(zu) }, { payload: pct(ab) }, { payload: pct((zu + ab) / 2) }];\n}\n\nreturn result;",
-        "outputs": 3,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 440,
-        "wires": [
-            [
-                "3000ed5336898"
-            ],
-            [
-                "3000f736ae249"
-            ],
-            [
-                "3001011a25bfa"
-            ]
-        ]
-    },
-    {
-        "id": "300114e114f5c",
+        "id": "3000e36fbeee7",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET FanSpeed",
@@ -505,21 +417,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 480,
+        "y": 320,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "30011ec48c90d",
+        "id": "3000ed5336898",
         "type": "ui_slider",
         "z": "e1a2b3c4d5f60003",
-        "name": "Lüfterstufe",
-        "label": "Lüfterstufe",
+        "name": "Fan speed",
+        "label": "Fan speed",
         "tooltip": "",
-        "group": "3000278dde6c4",
+        "group": "30001daa66d13",
         "order": 1,
         "width": 0,
         "height": 0,
@@ -528,10 +440,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 480,
+        "y": 320,
         "wires": [
             [
-                "300114e114f5c"
+                "3000e36fbeee7"
             ]
         ],
         "min": 1,
@@ -540,7 +452,7 @@
         "outs": "end"
     },
     {
-        "id": "300128a8042be",
+        "id": "3000f736ae249",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "FanSpeed",
@@ -559,35 +471,35 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 520,
+        "y": 360,
         "wires": [
             [
-                "30011ec48c90d"
+                "3000ed5336898"
             ]
         ]
     },
     {
-        "id": "3001328b7bc6f",
+        "id": "3001011a25bfa",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "3000278dde6c4",
+        "group": "30001daa66d13",
         "order": 2,
         "width": 0,
         "height": 0,
-        "name": "Stoßlüftung restlich",
-        "label": "Stoßlüftung restlich",
+        "name": "Boost remaining",
+        "label": "Boost remaining",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 560,
+        "y": 400,
         "wires": []
     },
     {
-        "id": "30013c6ef3620",
+        "id": "30010afd9d5ab",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Dauer merken",
+        "name": "remember duration",
         "rules": [
             {
                 "t": "set",
@@ -603,19 +515,19 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 600,
+        "y": 440,
         "wires": [
             []
         ]
     },
     {
-        "id": "300146526afd1",
+        "id": "300114e114f5c",
         "type": "ui_numeric",
         "z": "e1a2b3c4d5f60003",
-        "name": "Stoßlüftung Dauer",
-        "label": "Stoßlüftung Dauer (min)",
+        "name": "Boost duration",
+        "label": "Boost duration (min)",
         "tooltip": "",
-        "group": "3000278dde6c4",
+        "group": "30001daa66d13",
         "order": 3,
         "width": 0,
         "height": 0,
@@ -629,21 +541,21 @@
         "step": 5,
         "className": "",
         "x": 260,
-        "y": 600,
+        "y": 440,
         "wires": [
             [
-                "30013c6ef3620"
+                "30010afd9d5ab"
             ]
         ]
     },
     {
-        "id": "30015035e2982",
+        "id": "30011ec48c90d",
         "type": "ui_switch",
         "z": "e1a2b3c4d5f60003",
-        "name": "Stoßlüftung",
-        "label": "Stoßlüftung",
+        "name": "Boost",
+        "label": "Boost",
         "tooltip": "",
-        "group": "3000278dde6c4",
+        "group": "30001daa66d13",
         "order": 4,
         "width": 0,
         "height": 0,
@@ -663,19 +575,19 @@
         "animate": false,
         "className": "",
         "x": 260,
-        "y": 640,
+        "y": 480,
         "wires": [
             [
-                "30015a195a333"
+                "300128a8042be"
             ]
         ]
     },
     {
-        "id": "30015a195a333",
+        "id": "300128a8042be",
         "type": "function",
         "z": "e1a2b3c4d5f60003",
-        "name": "Stoßlüftung schalten",
-        "func": "// Das Protokoll kennt keine \"Stoßlüftung für N Minuten\": 79H ist nur der lesbare\n// Restzeit-Zähler der Anlage. Also läuft die Dauer hier: aktuelle Stufe merken, auf\n// Maximum gehen und nach Ablauf zurückstellen. Der Ticker unten prüft die Zeit.\nconst state = flow.get(\"vallox\") || {};\nconst start = msg.payload === true;\nlet out = null;\n\nif (start && (state.FanSpeed === undefined || state.FanSpeedMax === undefined)) {\n    node.warn(\"Lüfterstufe noch nicht abgefragt - bitte einen Moment warten\");\n    out = [null, { payload: \"-\" }, { payload: false }];\n} else if (start) {\n    const minutes = Number(flow.get(\"boostMinutes\")) || 30;\n    flow.set(\"boostPrevious\", state.FanSpeed);\n    flow.set(\"boostUntil\", Date.now() + minutes * 60000);\n    out = [\n        { payload: { request: \"SET\", variable: \"FanSpeed\", value: state.FanSpeedMax } },\n        { payload: minutes + \" min\" },\n        null,\n    ];\n} else {\n    const previous = flow.get(\"boostPrevious\");\n    flow.set(\"boostUntil\", null);\n    flow.set(\"boostPrevious\", null);\n    const restore =\n        previous === undefined || previous === null\n            ? null\n            : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n    out = [restore, { payload: \"aus\" }, null];\n}\n\nreturn out;",
+        "name": "boost switch",
+        "func": "// The protocol has no \"boost for N minutes\": 79H is only the read-only countdown the unit\n// keeps itself. So the duration is driven here - remember the current speed, go to maximum\n// and put it back when the time is up. The timer below watches the clock.\nconst state = flow.get(\"vallox\") || {};\nconst start = msg.payload === true;\nlet out = null;\n\nif (start && (state.FanSpeed === undefined || state.FanSpeedMax === undefined)) {\n    node.warn(\"fan speed not polled yet - wait a moment\");\n    out = [null, { payload: \"-\" }, { payload: false }];\n} else if (start) {\n    const minutes = Number(flow.get(\"boostMinutes\")) || 30;\n    flow.set(\"boostPrevious\", state.FanSpeed);\n    flow.set(\"boostUntil\", Date.now() + minutes * 60000);\n    out = [\n        { payload: { request: \"SET\", variable: \"FanSpeed\", value: state.FanSpeedMax } },\n        { payload: minutes + \" min\" },\n        null,\n    ];\n} else {\n    const previous = flow.get(\"boostPrevious\");\n    flow.set(\"boostUntil\", null);\n    flow.set(\"boostPrevious\", null);\n    const restore =\n        previous === undefined || previous === null\n            ? null\n            : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n    out = [restore, { payload: \"aus\" }, null];\n}\n\nreturn out;",
         "outputs": 3,
         "timeout": 0,
         "noerr": 0,
@@ -683,25 +595,25 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 640,
+        "y": 480,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ],
             [
-                "3001328b7bc6f"
+                "3001011a25bfa"
             ],
             [
-                "30015035e2982"
+                "30011ec48c90d"
             ]
         ]
     },
     {
-        "id": "300163fcd1ce4",
+        "id": "3001328b7bc6f",
         "type": "function",
         "z": "e1a2b3c4d5f60003",
-        "name": "Stoßlüftung überwachen",
-        "func": "// Wird vom Abfrage-Timer mitgetaktet: zählt die Restzeit herunter und stellt die vorherige\n// Lüfterstufe wieder her, sobald die Stoßlüftung abgelaufen ist.\nconst until = flow.get(\"boostUntil\");\nlet out = null;\n\nif (until) {\n    const remaining = Math.ceil((until - Date.now()) / 60000);\n    if (remaining > 0) {\n        out = [null, { payload: remaining + \" min\" }, null];\n    } else {\n        const previous = flow.get(\"boostPrevious\");\n        flow.set(\"boostUntil\", null);\n        flow.set(\"boostPrevious\", null);\n        const restore =\n            previous === undefined || previous === null\n                ? null\n                : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n        out = [restore, { payload: \"aus\" }, { payload: false }];\n    }\n}\n\nreturn out;",
+        "name": "boost timer",
+        "func": "// Driven by the poll timer: counts the remaining minutes down and restores the previous\n// fan speed once the boost has run out.\nconst until = flow.get(\"boostUntil\");\nlet out = null;\n\nif (until) {\n    const remaining = Math.ceil((until - Date.now()) / 60000);\n    if (remaining > 0) {\n        out = [null, { payload: remaining + \" min\" }, null];\n    } else {\n        const previous = flow.get(\"boostPrevious\");\n        flow.set(\"boostUntil\", null);\n        flow.set(\"boostPrevious\", null);\n        const restore =\n            previous === undefined || previous === null\n                ? null\n                : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n        out = [restore, { payload: \"aus\" }, { payload: false }];\n    }\n}\n\nreturn out;",
         "outputs": 3,
         "timeout": 0,
         "noerr": 0,
@@ -709,47 +621,47 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 680,
+        "y": 520,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ],
             [
-                "3001328b7bc6f"
+                "3001011a25bfa"
             ],
             [
-                "30015035e2982"
+                "30011ec48c90d"
             ]
         ]
     },
     {
-        "id": "30016de049695",
+        "id": "30013c6ef3620",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "3000317156075",
+        "group": "3000278dde6c4",
         "order": 1,
         "width": 0,
         "height": 0,
-        "name": "Bypassklappe",
-        "label": "Bypassklappe",
+        "name": "Bypass damper",
+        "label": "Bypass damper",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 720,
+        "y": 560,
         "wires": []
     },
     {
-        "id": "300177c3c1046",
+        "id": "300146526afd1",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Bypassklappe",
+        "name": "Bypass damper",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "$exists(payload.IoPortMultiPurpose2.DamperMotorPosition) ? (payload.IoPortMultiPurpose2.DamperMotorPosition ? \"Sommer\" : \"Winter\") : \"-\"",
+                "to": "$exists(payload.IoPortMultiPurpose2.DamperMotorPosition) ? (payload.IoPortMultiPurpose2.DamperMotorPosition ? \"summer\" : \"winter\") : \"-\"",
                 "tot": "jsonata"
             }
         ],
@@ -759,19 +671,19 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 720,
+        "y": 560,
         "wires": [
             [
-                "30016de049695"
+                "30013c6ef3620"
             ]
         ]
     },
     {
-        "id": "300181a7389f7",
+        "id": "30015035e2982",
         "type": "function",
         "z": "e1a2b3c4d5f60003",
         "name": "SET Select.PowerState",
-        "func": "// A3H Bits 0-3 sind die Bedientasten. Lesen, ein Feld ändern, zurückschreiben - so\n// gehen die nur lesbaren Anzeigebits unverändert zurück.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select noch nicht abgefragt - bitte einen Moment warten\");\n} else {\n    select.PowerState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
+        "func": "// A3H bits 0-3 are the panel keys. Read, change one field, write it back - that way\n// the read-only indicator bits go back untouched.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select not polled yet - wait a moment\");\n} else {\n    select.PowerState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -779,21 +691,21 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 760,
+        "y": 600,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "30018b8ab03a8",
+        "id": "30015a195a333",
         "type": "ui_switch",
         "z": "e1a2b3c4d5f60003",
-        "name": "Anlage ein",
-        "label": "Anlage ein",
+        "name": "Unit on",
+        "label": "Unit on",
         "tooltip": "",
-        "group": "3000317156075",
+        "group": "3000278dde6c4",
         "order": 2,
         "width": 0,
         "height": 0,
@@ -813,15 +725,15 @@
         "animate": false,
         "className": "",
         "x": 260,
-        "y": 760,
+        "y": 600,
         "wires": [
             [
-                "300181a7389f7"
+                "30015035e2982"
             ]
         ]
     },
     {
-        "id": "3001956e27d59",
+        "id": "300163fcd1ce4",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "Select.PowerState",
@@ -840,19 +752,19 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 800,
+        "y": 640,
         "wires": [
             [
-                "30018b8ab03a8"
+                "30015a195a333"
             ]
         ]
     },
     {
-        "id": "30019f519f70a",
+        "id": "30016de049695",
         "type": "function",
         "z": "e1a2b3c4d5f60003",
         "name": "SET Select.HeatingState",
-        "func": "// A3H Bits 0-3 sind die Bedientasten. Lesen, ein Feld ändern, zurückschreiben - so\n// gehen die nur lesbaren Anzeigebits unverändert zurück.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select noch nicht abgefragt - bitte einen Moment warten\");\n} else {\n    select.HeatingState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
+        "func": "// A3H bits 0-3 are the panel keys. Read, change one field, write it back - that way\n// the read-only indicator bits go back untouched.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select not polled yet - wait a moment\");\n} else {\n    select.HeatingState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -860,21 +772,21 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 840,
+        "y": 680,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3001a935170bb",
+        "id": "300177c3c1046",
         "type": "ui_switch",
         "z": "e1a2b3c4d5f60003",
-        "name": "Nachheizung ein",
-        "label": "Nachheizung ein",
+        "name": "Post-heating on",
+        "label": "Post-heating on",
         "tooltip": "",
-        "group": "3000317156075",
+        "group": "3000278dde6c4",
         "order": 3,
         "width": 0,
         "height": 0,
@@ -894,15 +806,15 @@
         "animate": false,
         "className": "",
         "x": 260,
-        "y": 840,
+        "y": 680,
         "wires": [
             [
-                "30019f519f70a"
+                "30016de049695"
             ]
         ]
     },
     {
-        "id": "3001b3188ea6c",
+        "id": "300181a7389f7",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "Select.HeatingState",
@@ -921,41 +833,41 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 880,
+        "y": 720,
         "wires": [
             [
-                "3001a935170bb"
+                "300177c3c1046"
             ]
         ]
     },
     {
-        "id": "3001bcfc0641d",
+        "id": "30018b8ab03a8",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "30003b54cda26",
+        "group": "3000317156075",
         "order": 1,
         "width": 0,
         "height": 0,
-        "name": "Störung",
-        "label": "Störung",
+        "name": "Fault",
+        "label": "Fault",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 920,
+        "y": 760,
         "wires": []
     },
     {
-        "id": "3001c6df7ddce",
+        "id": "3001956e27d59",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Störung",
+        "name": "Fault",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "$exists(payload.Select.FaultIndicator) ? (payload.Select.FaultIndicator ? \"STÖRUNG\" : \"ok\") : \"-\"",
+                "to": "$exists(payload.Select.FaultIndicator) ? (payload.Select.FaultIndicator ? \"FAULT\" : \"ok\") : \"-\"",
                 "tot": "jsonata"
             }
         ],
@@ -965,41 +877,41 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 920,
+        "y": 760,
         "wires": [
             [
-                "3001bcfc0641d"
+                "30018b8ab03a8"
             ]
         ]
     },
     {
-        "id": "3001d0c2f577f",
+        "id": "30019f519f70a",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "30003b54cda26",
+        "group": "3000317156075",
         "order": 2,
         "width": 0,
         "height": 0,
-        "name": "Filterwächter",
-        "label": "Filterwächter",
+        "name": "Filter guard",
+        "label": "Filter guard",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 960,
+        "y": 800,
         "wires": []
     },
     {
-        "id": "3001daa66d130",
+        "id": "3001a935170bb",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Filterwächter",
+        "name": "Filter guard",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "$exists(payload.Select.FilterGuardIndicator) ? (payload.Select.FilterGuardIndicator ? \"Filter prüfen\" : \"ok\") : \"-\"",
+                "to": "$exists(payload.Select.FilterGuardIndicator) ? (payload.Select.FilterGuardIndicator ? \"check filter\" : \"ok\") : \"-\"",
                 "tot": "jsonata"
             }
         ],
@@ -1009,41 +921,41 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 960,
+        "y": 800,
         "wires": [
             [
-                "3001d0c2f577f"
+                "30019f519f70a"
             ]
         ]
     },
     {
-        "id": "3001e489e4ae1",
+        "id": "3001b3188ea6c",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "30003b54cda26",
+        "group": "3000317156075",
         "order": 3,
         "width": 0,
         "height": 0,
-        "name": "Nachheizung aktiv",
-        "label": "Nachheizung aktiv",
+        "name": "Post-heating active",
+        "label": "Post-heating active",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 1000,
+        "y": 840,
         "wires": []
     },
     {
-        "id": "3001ee6d5c492",
+        "id": "3001bcfc0641d",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Nachheizung aktiv",
+        "name": "Post-heating active",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "$exists(payload.Select.HeatingIndicator) ? (payload.Select.HeatingIndicator ? \"heizt\" : \"aus\") : \"-\"",
+                "to": "$exists(payload.Select.HeatingIndicator) ? (payload.Select.HeatingIndicator ? \"heating\" : \"off\") : \"-\"",
                 "tot": "jsonata"
             }
         ],
@@ -1053,41 +965,41 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1000,
+        "y": 840,
         "wires": [
             [
-                "3001e489e4ae1"
+                "3001b3188ea6c"
             ]
         ]
     },
     {
-        "id": "3001f850d3e43",
+        "id": "3001c6df7ddce",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "30003b54cda26",
+        "group": "3000317156075",
         "order": 4,
         "width": 0,
         "height": 0,
-        "name": "Serviceerinnerung",
-        "label": "Serviceerinnerung",
+        "name": "Service reminder",
+        "label": "Service reminder",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 1040,
+        "y": 880,
         "wires": []
     },
     {
-        "id": "300202344b7f4",
+        "id": "3001d0c2f577f",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
-        "name": "Serviceerinnerung",
+        "name": "Service reminder",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "$exists(payload.Select.ServiceReminderIndicator) ? (payload.Select.ServiceReminderIndicator ? \"Service fällig\" : \"ok\") : \"-\"",
+                "to": "$exists(payload.Select.ServiceReminderIndicator) ? (payload.Select.ServiceReminderIndicator ? \"service due\" : \"ok\") : \"-\"",
                 "tot": "jsonata"
             }
         ],
@@ -1097,32 +1009,32 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1040,
+        "y": 880,
         "wires": [
             [
-                "3001f850d3e43"
+                "3001c6df7ddce"
             ]
         ]
     },
     {
-        "id": "30020c17c31a5",
+        "id": "3001daa66d130",
         "type": "ui_text",
         "z": "e1a2b3c4d5f60003",
-        "group": "30003b54cda26",
+        "group": "3000317156075",
         "order": 5,
         "width": 0,
         "height": 0,
-        "name": "Letzter Fehler",
-        "label": "Letzter Fehler",
+        "name": "Last error",
+        "label": "Last error",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
         "x": 920,
-        "y": 1080,
+        "y": 920,
         "wires": []
     },
     {
-        "id": "300215fb3ab56",
+        "id": "3001e489e4ae1",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "LastErrorNumber",
@@ -1141,15 +1053,15 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1080,
+        "y": 920,
         "wires": [
             [
-                "30020c17c31a5"
+                "3001daa66d130"
             ]
         ]
     },
     {
-        "id": "30021fdeb2507",
+        "id": "3001ee6d5c492",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET HeatingSetPoint",
@@ -1168,21 +1080,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1120,
+        "y": 960,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "300229c229eb8",
+        "id": "3001f850d3e43",
         "type": "ui_numeric",
         "z": "e1a2b3c4d5f60003",
-        "name": "Nachheizung Soll (°C)",
-        "label": "Nachheizung Soll (°C)",
+        "name": "Post-heating setpoint (°C)",
+        "label": "Post-heating setpoint (°C)",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 1,
         "width": 0,
         "height": 0,
@@ -1191,10 +1103,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1120,
+        "y": 960,
         "wires": [
             [
-                "30021fdeb2507"
+                "3001ee6d5c492"
             ]
         ],
         "min": 5,
@@ -1204,7 +1116,7 @@
         "format": "{{value}}"
     },
     {
-        "id": "300233a5a1869",
+        "id": "300202344b7f4",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "HeatingSetPoint",
@@ -1223,15 +1135,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1160,
+        "y": 1000,
         "wires": [
             [
-                "300229c229eb8"
+                "3001f850d3e43"
             ]
         ]
     },
     {
-        "id": "30023d891921a",
+        "id": "30020c17c31a5",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET PreHeatingSetPoint",
@@ -1250,21 +1162,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1200,
+        "y": 1040,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3002476c90bcb",
+        "id": "300215fb3ab56",
         "type": "ui_numeric",
         "z": "e1a2b3c4d5f60003",
-        "name": "Vorheizung Soll (°C)",
-        "label": "Vorheizung Soll (°C)",
+        "name": "Pre-heating setpoint (°C)",
+        "label": "Pre-heating setpoint (°C)",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 2,
         "width": 0,
         "height": 0,
@@ -1273,10 +1185,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1200,
+        "y": 1040,
         "wires": [
             [
-                "30023d891921a"
+                "30020c17c31a5"
             ]
         ],
         "min": -10,
@@ -1286,7 +1198,7 @@
         "format": "{{value}}"
     },
     {
-        "id": "300251500857c",
+        "id": "30021fdeb2507",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "PreHeatingSetPoint",
@@ -1305,15 +1217,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1240,
+        "y": 1080,
         "wires": [
             [
-                "3002476c90bcb"
+                "300215fb3ab56"
             ]
         ]
     },
     {
-        "id": "30025b337ff2d",
+        "id": "300229c229eb8",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET HRCBypass",
@@ -1332,21 +1244,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1280,
+        "y": 1120,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "30026516f78de",
+        "id": "300233a5a1869",
         "type": "ui_numeric",
         "z": "e1a2b3c4d5f60003",
-        "name": "Bypass Temperatur (°C)",
-        "label": "Bypass Temperatur (°C)",
+        "name": "Bypass temperature (°C)",
+        "label": "Bypass temperature (°C)",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 3,
         "width": 0,
         "height": 0,
@@ -1355,10 +1267,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1280,
+        "y": 1120,
         "wires": [
             [
-                "30025b337ff2d"
+                "300229c229eb8"
             ]
         ],
         "min": 0,
@@ -1368,7 +1280,7 @@
         "format": "{{value}}"
     },
     {
-        "id": "30026efa6f28f",
+        "id": "30023d891921a",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "HRCBypass",
@@ -1387,15 +1299,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1320,
+        "y": 1160,
         "wires": [
             [
-                "30026516f78de"
+                "300233a5a1869"
             ]
         ]
     },
     {
-        "id": "300278dde6c40",
+        "id": "3002476c90bcb",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET FanSpeedMin",
@@ -1414,21 +1326,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1360,
+        "y": 1200,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "300282c15e5f1",
+        "id": "300251500857c",
         "type": "ui_slider",
         "z": "e1a2b3c4d5f60003",
-        "name": "Lüfterstufe min",
-        "label": "Lüfterstufe min",
+        "name": "Fan speed min",
+        "label": "Fan speed min",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 4,
         "width": 0,
         "height": 0,
@@ -1437,10 +1349,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1360,
+        "y": 1200,
         "wires": [
             [
-                "300278dde6c40"
+                "3002476c90bcb"
             ]
         ],
         "min": 1,
@@ -1449,7 +1361,7 @@
         "outs": "end"
     },
     {
-        "id": "30028ca4d5fa2",
+        "id": "30025b337ff2d",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "FanSpeedMin",
@@ -1468,15 +1380,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1400,
+        "y": 1240,
         "wires": [
             [
-                "300282c15e5f1"
+                "300251500857c"
             ]
         ]
     },
     {
-        "id": "300296884d953",
+        "id": "30026516f78de",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET FanSpeedMax",
@@ -1495,21 +1407,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1440,
+        "y": 1280,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3002a06bc5304",
+        "id": "30026efa6f28f",
         "type": "ui_slider",
         "z": "e1a2b3c4d5f60003",
-        "name": "Lüfterstufe max",
-        "label": "Lüfterstufe max",
+        "name": "Fan speed max",
+        "label": "Fan speed max",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 5,
         "width": 0,
         "height": 0,
@@ -1518,10 +1430,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1440,
+        "y": 1280,
         "wires": [
             [
-                "300296884d953"
+                "30026516f78de"
             ]
         ],
         "min": 1,
@@ -1530,7 +1442,7 @@
         "outs": "end"
     },
     {
-        "id": "3002aa4f3ccb5",
+        "id": "300278dde6c40",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "FanSpeedMax",
@@ -1549,15 +1461,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1480,
+        "y": 1320,
         "wires": [
             [
-                "3002a06bc5304"
+                "30026efa6f28f"
             ]
         ]
     },
     {
-        "id": "3002b432b4666",
+        "id": "300282c15e5f1",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET DCFanInputAdjustment",
@@ -1576,21 +1488,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1520,
+        "y": 1360,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3002be162c017",
+        "id": "30028ca4d5fa2",
         "type": "ui_slider",
         "z": "e1a2b3c4d5f60003",
-        "name": "Zuluftventilator (%)",
-        "label": "Zuluftventilator (%)",
+        "name": "Supply fan (%)",
+        "label": "Supply fan (%)",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 6,
         "width": 0,
         "height": 0,
@@ -1599,10 +1511,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1520,
+        "y": 1360,
         "wires": [
             [
-                "3002b432b4666"
+                "300282c15e5f1"
             ]
         ],
         "min": 0,
@@ -1611,7 +1523,7 @@
         "outs": "end"
     },
     {
-        "id": "3002c7f9a39c8",
+        "id": "300296884d953",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "DCFanInputAdjustment",
@@ -1630,15 +1542,15 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1560,
+        "y": 1400,
         "wires": [
             [
-                "3002be162c017"
+                "30028ca4d5fa2"
             ]
         ]
     },
     {
-        "id": "3002d1dd1b379",
+        "id": "3002a06bc5304",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "SET DCFanOutputAdjustment",
@@ -1657,21 +1569,21 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 1600,
+        "y": 1440,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3002dbc092d2a",
+        "id": "3002aa4f3ccb5",
         "type": "ui_slider",
         "z": "e1a2b3c4d5f60003",
-        "name": "Abluftventilator (%)",
-        "label": "Abluftventilator (%)",
+        "name": "Exhaust fan (%)",
+        "label": "Exhaust fan (%)",
         "tooltip": "",
-        "group": "30004538453d7",
+        "group": "30003b54cda26",
         "order": 7,
         "width": 0,
         "height": 0,
@@ -1680,10 +1592,10 @@
         "topicType": "msg",
         "className": "",
         "x": 260,
-        "y": 1600,
+        "y": 1440,
         "wires": [
             [
-                "3002d1dd1b379"
+                "3002a06bc5304"
             ]
         ],
         "min": 0,
@@ -1692,7 +1604,7 @@
         "outs": "end"
     },
     {
-        "id": "3002e5a40a6db",
+        "id": "3002b432b4666",
         "type": "change",
         "z": "e1a2b3c4d5f60003",
         "name": "DCFanOutputAdjustment",
@@ -1711,19 +1623,19 @@
         "to": "",
         "reg": false,
         "x": 470,
-        "y": 1640,
+        "y": 1480,
         "wires": [
             [
-                "3002dbc092d2a"
+                "3002aa4f3ccb5"
             ]
         ]
     },
     {
-        "id": "3002ef878208c",
+        "id": "3002be162c017",
         "type": "function",
         "z": "e1a2b3c4d5f60003",
-        "name": "nächstes Register abfragen",
-        "func": "// Nur 2AH, 2BH, 2CH und 32H-35H kommen unaufgefordert. Alles andere muss abgefragt werden -\n// eines pro Takt, damit der Bus ruhig bleibt: die Bedienteile fragen auch ab.\nconst registers = [\"FanSpeed\",\"Select\",\"IoPortMultiPurpose2\",\"LastErrorNumber\",\"HeatingSetPoint\",\"PreHeatingSetPoint\",\"HRCBypass\",\"FanSpeedMin\",\"FanSpeedMax\",\"DCFanInputAdjustment\",\"DCFanOutputAdjustment\"];\nconst i = (context.get(\"i\") || 0) % registers.length;\ncontext.set(\"i\", i + 1);\nmsg.payload = { request: \"GET\", variable: registers[i] };\nreturn msg;",
+        "name": "poll next register",
+        "func": "// Only 2AH, 2BH, 2CH and 32H-35H arrive unasked. Everything else has to be polled - one\n// per tick, so the bus stays quiet: the physical panels are polling too.\nconst registers = [\"FanSpeed\",\"Select\",\"IoPortMultiPurpose2\",\"LastErrorNumber\",\"HeatingSetPoint\",\"PreHeatingSetPoint\",\"HRCBypass\",\"FanSpeedMin\",\"FanSpeedMax\",\"DCFanInputAdjustment\",\"DCFanOutputAdjustment\"];\nconst i = (context.get(\"i\") || 0) % registers.length;\ncontext.set(\"i\", i + 1);\nmsg.payload = { request: \"GET\", variable: registers[i] };\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1731,18 +1643,18 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 1680,
+        "y": 1520,
         "wires": [
             [
-                "300058ff34739"
+                "30004f1bbcd88"
             ]
         ]
     },
     {
-        "id": "3002f96af9a3d",
+        "id": "3002c7f9a39c8",
         "type": "inject",
         "z": "e1a2b3c4d5f60003",
-        "name": "alle 3 s",
+        "name": "every 3 s",
         "props": [
             {
                 "p": "payload"
@@ -1756,11 +1668,11 @@
         "payload": "",
         "payloadType": "date",
         "x": 260,
-        "y": 1680,
+        "y": 1520,
         "wires": [
             [
-                "3002ef878208c",
-                "300163fcd1ce4"
+                "3002be162c017",
+                "3001328b7bc6f"
             ]
         ]
     }

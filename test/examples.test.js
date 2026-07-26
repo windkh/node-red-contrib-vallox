@@ -140,69 +140,6 @@ describe('example flows', function () {
             }
         });
 
-        it('suppresses the efficiency instead of reporting nonsense', function () {
-            // eta = (supply - outdoor) / (extract - outdoor) is only meaningful while the extract
-            // air is clearly warmer than outside. In summer the denominator goes small or negative
-            // and the formula produces things like 150 %, which is what prompted this guard.
-            const fn = nodes.find((n) => n.type === 'function' && n.name === 'Wirkungsgrad');
-            assert.ok(fn, 'the efficiency function should exist');
-            const run = new Function('msg', 'node', fn.func + '\n');
-
-            const evaluate = (outdoor, extract, supply, exhaust) =>
-                run(
-                    {
-                        payload: {
-                            TemperatureOutside: outdoor,
-                            TemperatureInside: extract,
-                            TemperatureIncoming: supply,
-                            TemperatureExhaust: exhaust,
-                        },
-                    },
-                    { warn() {} }
-                );
-
-            // heating season: a real number
-            const winter = evaluate(-5, 22, 18, 2);
-            assert.match(winter[0].payload, /^\d+ %$/);
-            assert.strictEqual(winter[0].payload, '85 %');
-
-            // summer, outdoor warmer than the extract air: the 150 % case, now suppressed
-            for (const [outdoor, extract, supply, exhaust] of [
-                [28, 24, 22, 26],
-                [23, 24, 25, 24],
-                [26, 24, 21, 25],
-            ]) {
-                const out = evaluate(outdoor, extract, supply, exhaust);
-                assert.deepStrictEqual(
-                    out.map((m) => m.payload),
-                    ['-', '-', '-'],
-                    `outdoor ${outdoor} / extract ${extract} should not report a percentage`
-                );
-            }
-
-            // bypass open (damper on Sommer): the air goes past the exchanger, so there is no
-            // efficiency to report even when the temperature span looks usable
-            const bypassed = run(
-                {
-                    payload: {
-                        TemperatureOutside: 5,
-                        TemperatureInside: 22,
-                        TemperatureIncoming: 30,
-                        TemperatureExhaust: 8,
-                        IoPortMultiPurpose2: { DamperMotorPosition: true },
-                    },
-                },
-                { warn() {} }
-            );
-            assert.deepStrictEqual(
-                bypassed.map((m) => m.payload),
-                ['Bypass offen', 'Bypass offen', 'Bypass offen']
-            );
-
-            // nothing at all until all four temperatures have been seen
-            assert.strictEqual(evaluate(-5, 22, undefined, 2), null);
-        });
-
         it('ships no ui_base, which would collide with an existing dashboard', function () {
             assert.strictEqual(nodes.filter((n) => n.type === 'ui_base').length, 0);
         });
@@ -236,7 +173,7 @@ describe('example flows', function () {
         });
 
         it('polls only registers the master does not broadcast', function () {
-            const poller = nodes.find((n) => n.type === 'function' && /abfragen/.test(n.name || ''));
+            const poller = nodes.find((n) => n.type === 'function' && /poll next register/.test(n.name || ''));
             assert.ok(poller, 'expected a poll rotation');
             const listed = [...poller.func.matchAll(/"([A-Z][A-Za-z0-9]+)"/g)].map((m) => m[1]);
             assert.ok(listed.length >= 8, 'expected a rotation of registers');

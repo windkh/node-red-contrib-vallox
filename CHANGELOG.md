@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.38]
+
+### Cache every register the mainboard reports, whoever asked for it
+
+- **The `vallox` node now caches any frame sent by a mainboard** (`10H`-`1FH`), not only the ones
+  addressed to its own panel or to the panel group. The master answers each panel's poll
+  individually, and a register value is the same value whoever asked — so a node picks up everything
+  the physical panels are polling for without polling for it itself. In a captured minute of traffic
+  that is 130 requests and their answers, nearly all of which were previously discarded.
+  Frames between two other modules are still ignored.
+- Removed the **Auswertung** group from the dashboard example. Heat-recovery efficiency is not a
+  register: it is derived from the four temperatures and is only meaningful in the heating season
+  with the bypass closed, which made it more misleading than useful on a live page. The formula is
+  still described in the changelog for 0.1.36 for anyone who wants to add it back.
+- **All texts in the dashboard example are now English** — tab, groups, widget labels, node names and
+  the comments inside the function nodes. 23 widgets in five groups: Temperatures, Fan control,
+  Status, Warnings, Settings.
+
 ## [0.1.37]
 
 ### valloxtx can emit a Buffer, and the efficiency respects the bypass

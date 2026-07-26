@@ -75,7 +75,32 @@ describe('vallox node', function () {
         });
     });
 
-    it('ignores frames addressed to a different panel', function (t, done) {
+    it('caches a mainboard reply addressed to another panel', function (t, done) {
+        // The master answers each panel's poll individually. Those replies carry the same register
+        // value whoever asked, so a node picks them all up rather than only its own - that is how
+        // it learns everything the physical panels are polling for without polling itself.
+        load({}, ({ n1, state }) => {
+            state.on('input', (msg) => {
+                try {
+                    assertSubset(msg.payload, { FanSpeed: 5 });
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+            n1.receive({
+                payload: {
+                    sender: 0x11, // mainboard 1
+                    receiver: 0x22, // panel 2 - this node is panel 1 (33 / 0x21)
+                    request: 'SET',
+                    variable: 'FanSpeed',
+                    value: 5,
+                },
+            });
+        });
+    });
+
+    it('ignores a frame between two other modules', function (t, done) {
         load({}, ({ n1, state }) => {
             let fired = false;
             state.on('input', () => {
@@ -83,7 +108,8 @@ describe('vallox node', function () {
             });
             n1.receive({
                 payload: {
-                    receiver: 34,
+                    sender: 0x23, // panel 3 writing to panel 2: nothing to do with us
+                    receiver: 0x22,
                     request: 'SET',
                     variable: 'FanSpeed',
                     value: 5,

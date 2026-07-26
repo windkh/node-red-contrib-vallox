@@ -138,7 +138,7 @@ Holds the in-memory state of one Vallox device (panel or master) and generates o
 
 **Inputs** (one of three shapes on `msg.payload`):
 
-1. A decoded frame from `valloxrx` (object with a `receiver` field) — matching frames update the internal state.
+1. A decoded frame from `valloxrx` (object with a `receiver` field). It updates the state when it comes **from a mainboard** (`10H`-`1FH`), whoever it is addressed to, or when it is addressed to this node or its address group. A register value is the same whichever panel asked for it, so the node picks up everything the physical panels poll for without polling itself; frames between two other modules are ignored.
 2. A request object `{ request: "GET" | "SET", variable: "<name>", value: <value> }` — produces an outgoing telegram on output 2. A `SET` on a readonly variable goes to output 3 as an error.
 3. Anything else (or empty payload) — emits the current state snapshot on output 1.
 
