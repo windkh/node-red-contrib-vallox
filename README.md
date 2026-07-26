@@ -104,9 +104,18 @@ the length intact point at the RS485 line itself, such as collisions or missing 
 
 Encodes a telegram object into a 6-byte frame, ready for the bus. Normally fed by the **vallox** node's second output.
 
-- **Input** `msg.payload` — `{ domain, sender, receiver, command, arg }`. The checksum byte is computed and appended automatically.
-- **Output 1** — 6-byte array `[domain, sender, receiver, command, arg, checksum]`.
+- **Input** `msg.payload` — `{ domain, sender, receiver, command, arg }`. The checksum byte is computed and appended automatically. Set `repeatChecksum: true` for a write telegram and the checksum is sent twice, per Annex B.
+- **Output 1** — the frame, either as `[domain, sender, receiver, command, arg, checksum]` or as a `Buffer`.
 - **Output 2** — error string.
+
+**Configuration**
+
+- **Output** — `Array of bytes` (default, and what this node has always emitted) or `Buffer`.
+
+    A `serial out` node writes either form as bytes. Anything that **serialises** the payload does
+    not: `mqtt out` JSON-encodes an array into the text `[1,33,17,…]`, so the far end writes those
+    twenty characters to the port instead of the six-byte telegram, and the unit ignores it. Choose
+    **Buffer** whenever the frame leaves Node-RED as a message payload.
 
 See [`examples/valloxtx.json`](examples/valloxtx.json) for a minimal TX-only flow.
 

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.37]
+
+### valloxtx can emit a Buffer, and the efficiency respects the bypass
+
+- **New `valloxtx` option, Output: `Array of bytes` (default) or `Buffer`.** A `serial out` node
+  writes either as bytes, but anything that serialises the payload does not: `mqtt out` JSON-encodes
+  an array into the text `[1,33,17,…]`, and the receiving end then writes those characters to the
+  port instead of the telegram. The default is unchanged, so existing flows keep working; picking
+  Buffer removes the need for a `Buffer.from(msg.payload)` function node in front of the output.
+  Works with the 7-byte write telegram too.
+- **The efficiency is suppressed while the bypass damper is open.** With the damper on Sommer the air
+  goes past the heat exchanger, so there is nothing to recover and no efficiency to report — it now
+  shows `Bypass offen` rather than a number. That is a firmer rule than the 3 K span threshold from
+  0.1.36, which stays as a second guard.
+- `examples/vallox-dashboard.json` ships with `Output: Buffer`, since it is meant to run over a
+  serial link or an MQTT bridge.
+- Merged dependabot #14: `globals` 17.7.0 → 17.8.0 (dev only).
+
 ## [0.1.36]
 
 ### Only show the heat-recovery efficiency when it means something

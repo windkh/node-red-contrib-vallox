@@ -12,6 +12,12 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config);
         const node = this;
 
+        // An array of byte values is what this node has always emitted, and a `serial out` node
+        // writes it as bytes. An MQTT hop does not: it JSON-encodes the array, so the far end
+        // receives the text "[1,33,17,...]" and writes those characters to the port. Choose Buffer
+        // when the telegram travels over MQTT or anything else that serialises the payload.
+        const asBuffer = config.outputformat === 'buffer';
+
         this.on('input', async function (msg) {
             vallox.encode(
                 msg.payload,
@@ -22,7 +28,7 @@ module.exports = function (RED) {
                         text: 'ok',
                     });
 
-                    msg.payload = message;
+                    msg.payload = asBuffer ? Buffer.from(message) : message;
                     node.send([msg, null]);
                 },
                 function (errorMessage) {

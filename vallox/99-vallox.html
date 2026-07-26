@@ -90,6 +90,7 @@
         color: '#DDDDDD',
         defaults: {
             description: { value: '' },
+            outputformat: { value: 'array' },
         },
         inputs: 1,
         outputs: 2,
@@ -109,6 +110,20 @@
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
         <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
     </div>
+    <div class="form-row">
+        <label for="node-input-outputformat"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputformat">
+            <option value="array">Array of bytes</option>
+            <option value="buffer">Buffer</option>
+        </select>
+    </div>
+    <div class="form-tips">
+        A <code>serial out</code> node writes either form as bytes. Anything that serialises the
+        payload &mdash; an <code>mqtt out</code> node in particular &mdash; turns an array into the
+        text <code>[1,33,17,&hellip;]</code>, and the far end then writes those characters to the
+        port instead of the telegram. Choose <b>Buffer</b> whenever the frame leaves Node-RED as a
+        message payload.
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="valloxtx">
@@ -118,6 +133,8 @@
     <dl class="message-properties">
         <dt class="optional">Description <span class="property-type">string</span></dt>
         <dd>Optional label shown on the node in the editor.</dd>
+        <dt class="optional">Output <span class="property-type">array | buffer</span></dt>
+        <dd>Whether output 1 carries an <b>array of byte values</b> (the default, and what this node has always emitted) or a <b>Buffer</b>. A <code>serial out</code> node writes either as bytes, but anything that serialises the payload &mdash; <code>mqtt out</code> above all &mdash; encodes an array as the text <code>[1,33,17,&hellip;]</code>, and the receiving end then writes those characters to the port rather than the telegram. Pick Buffer when the frame leaves Node-RED as a message payload.</dd>
     </dl>
 
     <h3>Inputs</h3>

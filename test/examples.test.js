@@ -180,6 +180,25 @@ describe('example flows', function () {
                 );
             }
 
+            // bypass open (damper on Sommer): the air goes past the exchanger, so there is no
+            // efficiency to report even when the temperature span looks usable
+            const bypassed = run(
+                {
+                    payload: {
+                        TemperatureOutside: 5,
+                        TemperatureInside: 22,
+                        TemperatureIncoming: 30,
+                        TemperatureExhaust: 8,
+                        IoPortMultiPurpose2: { DamperMotorPosition: true },
+                    },
+                },
+                { warn() {} }
+            );
+            assert.deepStrictEqual(
+                bypassed.map((m) => m.payload),
+                ['Bypass offen', 'Bypass offen', 'Bypass offen']
+            );
+
             // nothing at all until all four temperatures have been seen
             assert.strictEqual(evaluate(-5, 22, undefined, 2), null);
         });

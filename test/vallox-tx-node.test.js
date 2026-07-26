@@ -33,6 +33,70 @@ describe('valloxtx node', function () {
         );
     }
 
+    describe('output format', function () {
+        function loadWith(config, cb) {
+            const flow = [
+                Object.assign({ id: 'n1', type: 'valloxtx', name: 'tx', wires: [['out'], ['err']] }, config),
+                { id: 'out', type: 'helper' },
+                { id: 'err', type: 'helper' },
+            ];
+            helper.load(txNode, flow, () =>
+                cb({ n1: helper.getNode('n1'), out: helper.getNode('out'), err: helper.getNode('err') })
+            );
+        }
+
+        const TELEGRAM = { domain: 0x01, sender: 0x21, receiver: 0x11, command: 0x29, arg: 0x1f };
+        const BYTES = [0x01, 0x21, 0x11, 0x29, 0x1f, 0x7b];
+
+        it('emits an array of bytes by default, as it always has', function (t, done) {
+            loadWith({}, ({ n1, out }) => {
+                out.on('input', (msg) => {
+                    try {
+                        assert.ok(Array.isArray(msg.payload), 'default output should stay an array');
+                        assert.ok(!Buffer.isBuffer(msg.payload));
+                        assert.deepStrictEqual(msg.payload, BYTES);
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                });
+                n1.receive({ payload: TELEGRAM });
+            });
+        });
+
+        it('emits a Buffer when asked, so an MQTT hop does not turn it into text', function (t, done) {
+            loadWith({ outputformat: 'buffer' }, ({ n1, out }) => {
+                out.on('input', (msg) => {
+                    try {
+                        assert.ok(Buffer.isBuffer(msg.payload), 'expected a Buffer');
+                        assert.deepStrictEqual(Array.from(msg.payload), BYTES);
+                        // this is the point of the option: JSON round-tripping keeps the bytes
+                        assert.strictEqual(msg.payload.toString('hex'), '012111291f7b');
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                });
+                n1.receive({ payload: TELEGRAM });
+            });
+        });
+
+        it('keeps the repeated checksum of a write telegram in Buffer form', function (t, done) {
+            loadWith({ outputformat: 'buffer' }, ({ n1, out }) => {
+                out.on('input', (msg) => {
+                    try {
+                        assert.strictEqual(msg.payload.length, 7);
+                        assert.deepStrictEqual(Array.from(msg.payload), [...BYTES, 0x7b]);
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                });
+                n1.receive({ payload: Object.assign({}, TELEGRAM, { repeatChecksum: true }) });
+            });
+        });
+    });
+
     it('encodes a FanSpeed=5 telegram with the correct checksum', function (t, done) {
         load(({ n1, out }) => {
             out.on('input', (msg) => {
