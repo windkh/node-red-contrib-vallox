@@ -18,7 +18,10 @@
 
 - Lint: ESLint flat config (`eslint.config.js`), ESLint >= 9. Run the lint script before committing.
 - Format: Prettier (`.prettierrc.json`) — 4-space indent, single quotes, es5 trailing commas.
-- Target Node.js >= 20. Use `const`/`let`, never `var`.
+- Target Node.js >= 20.
+- Avoid `var` — use `const`, or `let` only when the binding is reassigned (enforced by `no-var` / `prefer-const`).
+- One statement per line — don't pack multiple instructions onto a single line; keep lines simple to read (enforced by `max-statements-per-line`).
+- Single exit — each function has exactly one `return`, placed as its final statement; avoid early or multiple returns.
 
 ## Shared: Tests
 
@@ -40,7 +43,7 @@
 
 ## Shared: package.json scripts
 
-`lint`, `lint:fix`, `format`, `format:check`, `test` (`node --test`), `coverage` (`c8 node --test`), `coverage:check`.
+`lint`, `lint:fix`, `format`, `format:check`, `test` (`node --test` with `--test-force-exit --test-timeout=30000 --test-concurrency=1`, no path args), `coverage` / `coverage:check` (c8 over `npm test`).
 
 <!-- END node-red-standards:managed -->
 

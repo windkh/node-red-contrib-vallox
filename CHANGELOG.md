@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.32]
+
+### Sync node-red-standards 0.2.1 and run npm audit fix
+
+- `nrstd sync` refreshed the managed block in `AGENTS.md` and set the runner scripts:
+  `test` gains `--test-force-exit --test-timeout=30000 --test-concurrency=1`, and `coverage` /
+  `coverage:check` now wrap `npm test` instead of repeating the flags. The flags matter for this
+  repo: the node tests boot Node-RED in-process, so serialising them avoids helper-server
+  contention and force-exit stops a lingering handle from hanging the run. The c8 thresholds are
+  unaffected. Standards audit reports 10/10.
+- The sync kept this repo's own `eslint.config.js`, workflows, `dependabot.yml`, `CLAUDE.md` and
+  `.claude/settings.json`, which all differ from the templates on purpose.
+- `npm audit fix` applied what it could without a breaking change. **The published package remains
+  free of advisories** — `npm audit --omit=dev` reports zero, because it has no runtime
+  dependencies. The 26 remaining advisories are all inside the `node-red` 3.1.x dev tree
+  (`@node-red/*`, express, body-parser, ajv, jsonata, tar), and clearing them needs Node-RED 4.x,
+  which the devDependency deliberately avoids so the suite keeps testing the declared floor.
+
 ## [0.1.31]
 
 ### Document bus addressing and collisions
