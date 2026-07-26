@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.18]
+
+### Bump the GitHub Actions to v5
+
+- `actions/checkout` and `actions/setup-node` moved from v4 to v5 in both workflows; v4 targets the Node 20 action runtime that GitHub deprecated, so every job was annotated with a forced-to-Node-24 warning.
+
 ## [0.1.17]
 
 ### Finish the node-red-standards migration
