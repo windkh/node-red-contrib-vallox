@@ -15,6 +15,16 @@ This package contains nodes for controlling vallox devices via the serial RS485 
 You must connect the RS485 bus and read the data using e.g. an RS485 to serial converter.
 Then use a serial node to read the data and feed it to the node.
 
+# Requirements
+
+Node-RED 3.1.0 or newer on Node.js 20 or newer. The nodes themselves use only long-standing
+runtime APIs, so the floor is set by Node.js 20: Node-RED 3.1.0 is the first release that
+supports it. The test suite runs against that floor.
+
+You also need a byte stream to and from the unit — typically
+[node-red-node-serialport](https://flows.nodered.org/node/node-red-node-serialport) on an RS485
+adapter, or an MQTT bridge.
+
 # Dependencies
 
 This package depends on the following libraries

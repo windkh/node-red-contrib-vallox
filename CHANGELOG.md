@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.20]
+
+### Declare a real minimum Node-RED version
+
+- `node-red.version` was `>=0.1.0`, which never described anything real. It is now `>=3.1.0`.
+- The nodes only use `RED.nodes.createNode` / `registerType`, `node.send` / `status` / `warn` and the `input` / `close` handlers — all present since Node-RED 0.x — so the floor is not set by the code but by `engines.node: >=20`: Node-RED 3.1.0 is the first release that supports Node 20.
+- The `node-red` devDependency stays on `^3.1.0` so the suite keeps testing that floor, and dependabot is now told not to raise it on its own.
+- Documented the requirement in `README.md`, which previously stated none.
+
 ## [0.1.19]
 
 ### Dependency sweep: ESLint 10, c8 12, Actions v7

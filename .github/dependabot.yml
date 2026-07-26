@@ -5,6 +5,14 @@ updates:
       schedule:
           interval: weekly
       open-pull-requests-limit: 5
+      ignore:
+          # The node-red devDependency deliberately tracks the floor declared in
+          # package.json's `node-red.version`, so the suite exercises the oldest
+          # supported runtime. Raise both together or not at all.
+          - dependency-name: node-red
+            update-types:
+                - version-update:semver-major
+                - version-update:semver-minor
       groups:
           # eslint and @eslint/js share a peer range: bumping one alone makes `npm ci` unresolvable.
           eslint:
