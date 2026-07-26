@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.35]
+
+### Rework the dashboard example after trying it on a real system
+
+- **No `ui_base`.** The example shipped one, so importing it into an instance that already has a
+  dashboard left two — and dashboard 1.x expects exactly one. That is also why re-importing merged
+  badly and lost the group holding the four temperatures. The tab no longer sets an `order` either,
+  so it lands at the end of an existing tab bar instead of contesting position 1.
+- **The temperatures are their own group, `Temperaturen`**, with unambiguous labels:
+  Außenluft-, Zuluft-, Abluft- and Fortlufttemperatur. A test now fails if any of the four goes
+  missing.
+- **Stoßlüftung takes a duration in minutes.** `79H` is the unit's own read-only countdown, so a
+  duration cannot be written to it. The flow now remembers the current fan speed, goes to
+  `FanSpeedMax`, counts the remaining minutes down on the existing 3 s tick and restores the previous
+  speed when the time is up. Switching it off early restores immediately.
+- **One widget per setpoint instead of two.** Each slider or numeric now both shows the current value
+  and sets a new one (`passthru: false`), so the inputs no longer sit at their minimum and the page is
+  a third shorter.
+- **Percentages and speeds are sliders**, not numeric fields — the DC fan settings in particular were
+  awkward to type. Fan speeds use 1-8 in steps of 1, the fans 0-100 in steps of 5.
+- Added `LastErrorNumber` to the warnings group, and `LastErrorNumber` / `IoPortMultiPurpose2` to the
+  poll rotation.
+- 24 widgets in six groups, down from 32 in six.
+
+## [0.1.34]
+
+### Dashboard example flow
+
+- Added `examples/vallox-dashboard.json`, a node-red-dashboard (1.x) page modelled on an existing
+  FHEM "Lüftung" room: 32 widgets in six groups — temperatures, heat-recovery efficiency, fan speed
+  and boost, status, warnings, and every setpoint. Plots are left out, as is FHEM's own
+  Lüftungsregelung section, whose CO2 and humidity thresholds are host-side automation rather than
+  Vallox registers.
+- Efficiency is not a register: a function node derives supply, extract and mean efficiency from the
+  four temperatures the way the `valloxserial` Arduino library does.
+- `Select` and `Flags6` are written by read-modify-write on the cached value, so the power and
+  post-heating switches and the boost button change one bit and return the rest untouched. Boost uses
+  `Flags6` bit 5 and shows `FirePlaceBoosterCounter` as the remaining minutes.
+- A poll rotation asks for one of twelve registers every 3 seconds, since only seven arrive unasked.
+  The example ships configured as Panel 7 rather than Panel 1, so it does not collide with an
+  original control unit.
+- Generated and checked: `test/examples.test.js` now verifies the dashboard's register names exist,
+  that nothing read-only is written, that every widget belongs to a group belonging to a tab, and
+  that the poll rotation does not waste bus time on broadcast registers. All 26 JSONata expressions
+  were compiled and evaluated against a realistic state snapshot, and every write was pushed through
+  `convert` to confirm it encodes to a byte. Tests 164 → 172.
+
 ## [0.1.33]
 
 ### Adopt the redrafted code-style rules from node-red-standards 0.3.0

@@ -215,18 +215,25 @@ The full flow with fan-speed injection buttons, an HTTP state endpoint and an MQ
 
 Import these from the Node-RED editor menu (**Import → Examples → node-red-contrib-vallox**).
 
-| Flow                                                    | What it shows                                                                                 |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| [`vallox-commands.json`](examples/vallox-commands.json) | One inject per writable variable — every command this package can send, with realistic values |
-| [`vallox-monitor.json`](examples/vallox-monitor.json)   | Decoding the bus and caching every variable, with replayable sample frames and a corrupt one  |
-| [`vallox.json`](examples/vallox.json)                   | Complete RX + state + TX flow with an MQTT bridge                                             |
-| [`valloxrx.json`](examples/valloxrx.json)               | Minimal receive-only flow                                                                     |
-| [`valloxtx.json`](examples/valloxtx.json)               | Minimal send-only flow                                                                        |
-| [`serialmqtt.json`](examples/serialmqtt.json)           | Bridging the serial port to MQTT, for running the decoder on another host                     |
+| Flow                                                      | What it shows                                                                                                                               |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`vallox-dashboard.json`](examples/vallox-dashboard.json) | A **node-red-dashboard** page: temperatures, heat-recovery efficiency, fan speed, status, warnings and every setpoint, with a poll rotation |
+| [`vallox-commands.json`](examples/vallox-commands.json)   | One inject per writable variable — every command this package can send, with realistic values                                               |
+| [`vallox-monitor.json`](examples/vallox-monitor.json)     | Decoding the bus and caching every variable, with replayable sample frames and a corrupt one                                                |
+| [`vallox.json`](examples/vallox.json)                     | Complete RX + state + TX flow with an MQTT bridge                                                                                           |
+| [`valloxrx.json`](examples/valloxrx.json)                 | Minimal receive-only flow                                                                                                                   |
+| [`valloxtx.json`](examples/valloxtx.json)                 | Minimal send-only flow                                                                                                                      |
+| [`serialmqtt.json`](examples/serialmqtt.json)             | Bridging the serial port to MQTT, for running the decoder on another host                                                                   |
 
 The two generated flows need no hardware: their inject nodes replay real frames and real requests,
 and [`test/examples.test.js`](test/examples.test.js) checks that every value in them is one the
 package can actually encode.
+
+`vallox-dashboard.json` additionally needs
+[node-red-dashboard](https://flows.nodered.org/node/node-red-dashboard) (1.x, the `ui_*` nodes)
+installed, and expects the bus on its input — replace the placeholder with your `serial in` or
+`mqtt in`. It writes `Select` and `Flags6` by reading the cached value, changing one field and
+writing it back, which is the pattern the protocol requires for bit fields.
 
 # Command reference
 

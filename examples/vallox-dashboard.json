@@ -1,0 +1,1766 @@
+[
+    {
+        "id": "300009e3779b1",
+        "type": "ui_tab",
+        "name": "Lüftung",
+        "icon": "fa-fan",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "300013c6ef362",
+        "type": "ui_group",
+        "name": "Temperaturen",
+        "tab": "300009e3779b1",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "30001daa66d13",
+        "type": "ui_group",
+        "name": "Auswertung",
+        "tab": "300009e3779b1",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "3000278dde6c4",
+        "type": "ui_group",
+        "name": "Lüftungskontrolle",
+        "tab": "300009e3779b1",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "3000317156075",
+        "type": "ui_group",
+        "name": "Status",
+        "tab": "300009e3779b1",
+        "order": 4,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "30003b54cda26",
+        "type": "ui_group",
+        "name": "Warnungen",
+        "tab": "300009e3779b1",
+        "order": 5,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "30004538453d7",
+        "type": "ui_group",
+        "name": "Einstellungen",
+        "tab": "300009e3779b1",
+        "order": 6,
+        "disp": true,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "30008a708a7ae",
+        "type": "comment",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Wire your serial in / mqtt in (Output: a Buffer) into valloxrx",
+        "info": "Only seven registers arrive unasked (2AH 2BH 2CH 32H-35H). Everything else on this page is\npolled by the rotation at the bottom, one register every 3 seconds.\n\nSet the vallox node to an address no physical panel uses: the original control unit is\nPanel 1 (33), further panels take 34, 35 and so on.",
+        "x": 250,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "30004f1bbcd88",
+        "type": "valloxrx",
+        "z": "e1a2b3c4d5f60003",
+        "name": "",
+        "description": "",
+        "debug": false,
+        "capturefile": "",
+        "x": 260,
+        "y": 80,
+        "wires": [
+            [
+                "300058ff34739"
+            ],
+            [
+                "30006cc623a9b"
+            ]
+        ]
+    },
+    {
+        "id": "300058ff34739",
+        "type": "vallox",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Panel 7",
+        "description": "Panel 7",
+        "receiver": 39,
+        "sendonnewdata": true,
+        "writesequence": true,
+        "x": 440,
+        "y": 80,
+        "wires": [
+            [
+                "300094540215f",
+                "3000a81af14c1",
+                "3000bbe1e0823",
+                "3000cfa8cfb85",
+                "3000e36fbeee7",
+                "30010afd9d5ab",
+                "300128a8042be",
+                "300177c3c1046",
+                "3001956e27d59",
+                "3001b3188ea6c",
+                "3001c6df7ddce",
+                "3001daa66d130",
+                "3001ee6d5c492",
+                "300202344b7f4",
+                "300215fb3ab56",
+                "300233a5a1869",
+                "300251500857c",
+                "30026efa6f28f",
+                "30028ca4d5fa2",
+                "3002aa4f3ccb5",
+                "3002c7f9a39c8",
+                "3002e5a40a6db"
+            ],
+            [
+                "300062e2ac0ea"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "300062e2ac0ea",
+        "type": "valloxtx",
+        "z": "e1a2b3c4d5f60003",
+        "name": "",
+        "description": "",
+        "x": 620,
+        "y": 80,
+        "wires": [
+            [
+                "300076a99b44c"
+            ],
+            [
+                "3000808d12dfd"
+            ]
+        ]
+    },
+    {
+        "id": "300076a99b44c",
+        "type": "debug",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Bytes auf den Bus - hier serial out / mqtt out einsetzen",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "30006cc623a9b",
+        "type": "debug",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Dekodierfehler",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "3000808d12dfd",
+        "type": "debug",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Kodierfehler",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "300094540215f",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Zustand merken",
+        "rules": [
+            {
+                "t": "set",
+                "p": "vallox",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "30009e3779b10",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "300013c6ef362",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Außenlufttemperatur",
+        "label": "Außenlufttemperatur",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "3000a81af14c1",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "TemperatureOutside",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.TemperatureOutside) ? payload.TemperatureOutside & \" °C\" : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 160,
+        "wires": [
+            [
+                "30009e3779b10"
+            ]
+        ]
+    },
+    {
+        "id": "3000b1fe68e72",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "300013c6ef362",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Zulufttemperatur",
+        "label": "Zulufttemperatur",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "3000bbe1e0823",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "TemperatureIncoming",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.TemperatureIncoming) ? payload.TemperatureIncoming & \" °C\" : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 200,
+        "wires": [
+            [
+                "3000b1fe68e72"
+            ]
+        ]
+    },
+    {
+        "id": "3000c5c5581d4",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "300013c6ef362",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Ablufttemperatur",
+        "label": "Ablufttemperatur",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3000cfa8cfb85",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "TemperatureInside",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.TemperatureInside) ? payload.TemperatureInside & \" °C\" : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 240,
+        "wires": [
+            [
+                "3000c5c5581d4"
+            ]
+        ]
+    },
+    {
+        "id": "3000d98c47536",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "300013c6ef362",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Fortlufttemperatur",
+        "label": "Fortlufttemperatur",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "3000e36fbeee7",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "TemperatureExhaust",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.TemperatureExhaust) ? payload.TemperatureExhaust & \" °C\" : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 280,
+        "wires": [
+            [
+                "3000d98c47536"
+            ]
+        ]
+    },
+    {
+        "id": "3000ed5336898",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30001daa66d13",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Wirkungsgrad Zuluft",
+        "label": "Wirkungsgrad Zuluft",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3000f736ae249",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30001daa66d13",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Wirkungsgrad Abluft",
+        "label": "Wirkungsgrad Abluft",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "3001011a25bfa",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30001daa66d13",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Wirkungsgrad Mittel",
+        "label": "Wirkungsgrad Mittel",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "30010afd9d5ab",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Wirkungsgrad",
+        "func": "// Kein Register: der Wirkungsgrad wird aus den vier Temperaturen berechnet, genau wie\n// es die valloxserial-Arduino-Bibliothek macht.\nconst s = msg.payload;\nconst needed = [s.TemperatureInside, s.TemperatureOutside, s.TemperatureIncoming, s.TemperatureExhaust];\nconst span = s.TemperatureInside - s.TemperatureOutside;\nlet result = null;\n\nif (span !== 0 && needed.every((v) => v !== undefined)) {\n    const zu = ((s.TemperatureIncoming - s.TemperatureOutside) * 100) / span;\n    const ab = ((s.TemperatureInside - s.TemperatureExhaust) * 100) / span;\n    const pct = (v) => Math.round(v) + \" %\";\n    result = [{ payload: pct(zu) }, { payload: pct(ab) }, { payload: pct((zu + ab) / 2) }];\n}\n\nreturn result;",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 440,
+        "wires": [
+            [
+                "3000ed5336898"
+            ],
+            [
+                "3000f736ae249"
+            ],
+            [
+                "3001011a25bfa"
+            ]
+        ]
+    },
+    {
+        "id": "300114e114f5c",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET FanSpeed",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"FanSpeed\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 480,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "30011ec48c90d",
+        "type": "ui_slider",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Lüfterstufe",
+        "label": "Lüfterstufe",
+        "tooltip": "",
+        "group": "3000278dde6c4",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 480,
+        "wires": [
+            [
+                "300114e114f5c"
+            ]
+        ],
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "outs": "end"
+    },
+    {
+        "id": "300128a8042be",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "FanSpeed",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.FanSpeed",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 520,
+        "wires": [
+            [
+                "30011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "3001328b7bc6f",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "3000278dde6c4",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Stoßlüftung restlich",
+        "label": "Stoßlüftung restlich",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "30013c6ef3620",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Dauer merken",
+        "rules": [
+            {
+                "t": "set",
+                "p": "boostMinutes",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "300146526afd1",
+        "type": "ui_numeric",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Stoßlüftung Dauer",
+        "label": "Stoßlüftung Dauer (min)",
+        "tooltip": "",
+        "group": "3000278dde6c4",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "wrap": false,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "format": "{{value}}",
+        "min": 5,
+        "max": 120,
+        "step": 5,
+        "className": "",
+        "x": 260,
+        "y": 600,
+        "wires": [
+            [
+                "30013c6ef3620"
+            ]
+        ]
+    },
+    {
+        "id": "30015035e2982",
+        "type": "ui_switch",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Stoßlüftung",
+        "label": "Stoßlüftung",
+        "tooltip": "",
+        "group": "3000278dde6c4",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "true",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 260,
+        "y": 640,
+        "wires": [
+            [
+                "30015a195a333"
+            ]
+        ]
+    },
+    {
+        "id": "30015a195a333",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Stoßlüftung schalten",
+        "func": "// Das Protokoll kennt keine \"Stoßlüftung für N Minuten\": 79H ist nur der lesbare\n// Restzeit-Zähler der Anlage. Also läuft die Dauer hier: aktuelle Stufe merken, auf\n// Maximum gehen und nach Ablauf zurückstellen. Der Ticker unten prüft die Zeit.\nconst state = flow.get(\"vallox\") || {};\nconst start = msg.payload === true;\nlet out = null;\n\nif (start && (state.FanSpeed === undefined || state.FanSpeedMax === undefined)) {\n    node.warn(\"Lüfterstufe noch nicht abgefragt - bitte einen Moment warten\");\n    out = [null, { payload: \"-\" }, { payload: false }];\n} else if (start) {\n    const minutes = Number(flow.get(\"boostMinutes\")) || 30;\n    flow.set(\"boostPrevious\", state.FanSpeed);\n    flow.set(\"boostUntil\", Date.now() + minutes * 60000);\n    out = [\n        { payload: { request: \"SET\", variable: \"FanSpeed\", value: state.FanSpeedMax } },\n        { payload: minutes + \" min\" },\n        null,\n    ];\n} else {\n    const previous = flow.get(\"boostPrevious\");\n    flow.set(\"boostUntil\", null);\n    flow.set(\"boostPrevious\", null);\n    const restore =\n        previous === undefined || previous === null\n            ? null\n            : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n    out = [restore, { payload: \"aus\" }, null];\n}\n\nreturn out;",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 640,
+        "wires": [
+            [
+                "300058ff34739"
+            ],
+            [
+                "3001328b7bc6f"
+            ],
+            [
+                "30015035e2982"
+            ]
+        ]
+    },
+    {
+        "id": "300163fcd1ce4",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Stoßlüftung überwachen",
+        "func": "// Wird vom Abfrage-Timer mitgetaktet: zählt die Restzeit herunter und stellt die vorherige\n// Lüfterstufe wieder her, sobald die Stoßlüftung abgelaufen ist.\nconst until = flow.get(\"boostUntil\");\nlet out = null;\n\nif (until) {\n    const remaining = Math.ceil((until - Date.now()) / 60000);\n    if (remaining > 0) {\n        out = [null, { payload: remaining + \" min\" }, null];\n    } else {\n        const previous = flow.get(\"boostPrevious\");\n        flow.set(\"boostUntil\", null);\n        flow.set(\"boostPrevious\", null);\n        const restore =\n            previous === undefined || previous === null\n                ? null\n                : { payload: { request: \"SET\", variable: \"FanSpeed\", value: previous } };\n        out = [restore, { payload: \"aus\" }, { payload: false }];\n    }\n}\n\nreturn out;",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 680,
+        "wires": [
+            [
+                "300058ff34739"
+            ],
+            [
+                "3001328b7bc6f"
+            ],
+            [
+                "30015035e2982"
+            ]
+        ]
+    },
+    {
+        "id": "30016de049695",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "3000317156075",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Bypassklappe",
+        "label": "Bypassklappe",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "300177c3c1046",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Bypassklappe",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.IoPortMultiPurpose2.DamperMotorPosition) ? (payload.IoPortMultiPurpose2.DamperMotorPosition ? \"Sommer\" : \"Winter\") : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 720,
+        "wires": [
+            [
+                "30016de049695"
+            ]
+        ]
+    },
+    {
+        "id": "300181a7389f7",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET Select.PowerState",
+        "func": "// A3H Bits 0-3 sind die Bedientasten. Lesen, ein Feld ändern, zurückschreiben - so\n// gehen die nur lesbaren Anzeigebits unverändert zurück.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select noch nicht abgefragt - bitte einen Moment warten\");\n} else {\n    select.PowerState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 760,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "30018b8ab03a8",
+        "type": "ui_switch",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Anlage ein",
+        "label": "Anlage ein",
+        "tooltip": "",
+        "group": "3000317156075",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "true",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 260,
+        "y": 760,
+        "wires": [
+            [
+                "300181a7389f7"
+            ]
+        ]
+    },
+    {
+        "id": "3001956e27d59",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Select.PowerState",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.Select.PowerState",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 800,
+        "wires": [
+            [
+                "30018b8ab03a8"
+            ]
+        ]
+    },
+    {
+        "id": "30019f519f70a",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET Select.HeatingState",
+        "func": "// A3H Bits 0-3 sind die Bedientasten. Lesen, ein Feld ändern, zurückschreiben - so\n// gehen die nur lesbaren Anzeigebits unverändert zurück.\nconst select = Object.assign({}, (flow.get(\"vallox\") || {}).Select);\nlet out = null;\n\nif (select.PowerState === undefined) {\n    node.warn(\"Select noch nicht abgefragt - bitte einen Moment warten\");\n} else {\n    select.HeatingState = msg.payload === true;\n    msg.payload = { request: \"SET\", variable: \"Select\", value: select };\n    out = msg;\n}\n\nreturn out;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 840,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3001a935170bb",
+        "type": "ui_switch",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Nachheizung ein",
+        "label": "Nachheizung ein",
+        "tooltip": "",
+        "group": "3000317156075",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "true",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 260,
+        "y": 840,
+        "wires": [
+            [
+                "30019f519f70a"
+            ]
+        ]
+    },
+    {
+        "id": "3001b3188ea6c",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Select.HeatingState",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.Select.HeatingState",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 880,
+        "wires": [
+            [
+                "3001a935170bb"
+            ]
+        ]
+    },
+    {
+        "id": "3001bcfc0641d",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30003b54cda26",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Störung",
+        "label": "Störung",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "3001c6df7ddce",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Störung",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.Select.FaultIndicator) ? (payload.Select.FaultIndicator ? \"STÖRUNG\" : \"ok\") : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 920,
+        "wires": [
+            [
+                "3001bcfc0641d"
+            ]
+        ]
+    },
+    {
+        "id": "3001d0c2f577f",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30003b54cda26",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Filterwächter",
+        "label": "Filterwächter",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "3001daa66d130",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Filterwächter",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.Select.FilterGuardIndicator) ? (payload.Select.FilterGuardIndicator ? \"Filter prüfen\" : \"ok\") : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 960,
+        "wires": [
+            [
+                "3001d0c2f577f"
+            ]
+        ]
+    },
+    {
+        "id": "3001e489e4ae1",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30003b54cda26",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Nachheizung aktiv",
+        "label": "Nachheizung aktiv",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "3001ee6d5c492",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Nachheizung aktiv",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.Select.HeatingIndicator) ? (payload.Select.HeatingIndicator ? \"heizt\" : \"aus\") : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1000,
+        "wires": [
+            [
+                "3001e489e4ae1"
+            ]
+        ]
+    },
+    {
+        "id": "3001f850d3e43",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30003b54cda26",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Serviceerinnerung",
+        "label": "Serviceerinnerung",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "300202344b7f4",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Serviceerinnerung",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.Select.ServiceReminderIndicator) ? (payload.Select.ServiceReminderIndicator ? \"Service fällig\" : \"ok\") : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1040,
+        "wires": [
+            [
+                "3001f850d3e43"
+            ]
+        ]
+    },
+    {
+        "id": "30020c17c31a5",
+        "type": "ui_text",
+        "z": "e1a2b3c4d5f60003",
+        "group": "30003b54cda26",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "Letzter Fehler",
+        "label": "Letzter Fehler",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 920,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "300215fb3ab56",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "LastErrorNumber",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$exists(payload.LastErrorNumber) ? payload.LastErrorNumber : \"-\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1080,
+        "wires": [
+            [
+                "30020c17c31a5"
+            ]
+        ]
+    },
+    {
+        "id": "30021fdeb2507",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET HeatingSetPoint",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"HeatingSetPoint\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1120,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "300229c229eb8",
+        "type": "ui_numeric",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Nachheizung Soll (°C)",
+        "label": "Nachheizung Soll (°C)",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1120,
+        "wires": [
+            [
+                "30021fdeb2507"
+            ]
+        ],
+        "min": 5,
+        "max": 30,
+        "step": 1,
+        "wrap": false,
+        "format": "{{value}}"
+    },
+    {
+        "id": "300233a5a1869",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "HeatingSetPoint",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.HeatingSetPoint",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1160,
+        "wires": [
+            [
+                "300229c229eb8"
+            ]
+        ]
+    },
+    {
+        "id": "30023d891921a",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET PreHeatingSetPoint",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"PreHeatingSetPoint\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1200,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3002476c90bcb",
+        "type": "ui_numeric",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Vorheizung Soll (°C)",
+        "label": "Vorheizung Soll (°C)",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1200,
+        "wires": [
+            [
+                "30023d891921a"
+            ]
+        ],
+        "min": -10,
+        "max": 15,
+        "step": 1,
+        "wrap": false,
+        "format": "{{value}}"
+    },
+    {
+        "id": "300251500857c",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "PreHeatingSetPoint",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.PreHeatingSetPoint",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1240,
+        "wires": [
+            [
+                "3002476c90bcb"
+            ]
+        ]
+    },
+    {
+        "id": "30025b337ff2d",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET HRCBypass",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"HRCBypass\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1280,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "30026516f78de",
+        "type": "ui_numeric",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Bypass Temperatur (°C)",
+        "label": "Bypass Temperatur (°C)",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1280,
+        "wires": [
+            [
+                "30025b337ff2d"
+            ]
+        ],
+        "min": 0,
+        "max": 25,
+        "step": 1,
+        "wrap": false,
+        "format": "{{value}}"
+    },
+    {
+        "id": "30026efa6f28f",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "HRCBypass",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.HRCBypass",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1320,
+        "wires": [
+            [
+                "30026516f78de"
+            ]
+        ]
+    },
+    {
+        "id": "300278dde6c40",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET FanSpeedMin",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"FanSpeedMin\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1360,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "300282c15e5f1",
+        "type": "ui_slider",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Lüfterstufe min",
+        "label": "Lüfterstufe min",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1360,
+        "wires": [
+            [
+                "300278dde6c40"
+            ]
+        ],
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "outs": "end"
+    },
+    {
+        "id": "30028ca4d5fa2",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "FanSpeedMin",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.FanSpeedMin",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1400,
+        "wires": [
+            [
+                "300282c15e5f1"
+            ]
+        ]
+    },
+    {
+        "id": "300296884d953",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET FanSpeedMax",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"FanSpeedMax\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1440,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3002a06bc5304",
+        "type": "ui_slider",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Lüfterstufe max",
+        "label": "Lüfterstufe max",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1440,
+        "wires": [
+            [
+                "300296884d953"
+            ]
+        ],
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "outs": "end"
+    },
+    {
+        "id": "3002aa4f3ccb5",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "FanSpeedMax",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.FanSpeedMax",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1480,
+        "wires": [
+            [
+                "3002a06bc5304"
+            ]
+        ]
+    },
+    {
+        "id": "3002b432b4666",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET DCFanInputAdjustment",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"DCFanInputAdjustment\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1520,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3002be162c017",
+        "type": "ui_slider",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Zuluftventilator (%)",
+        "label": "Zuluftventilator (%)",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1520,
+        "wires": [
+            [
+                "3002b432b4666"
+            ]
+        ],
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "outs": "end"
+    },
+    {
+        "id": "3002c7f9a39c8",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "DCFanInputAdjustment",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.DCFanInputAdjustment",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1560,
+        "wires": [
+            [
+                "3002be162c017"
+            ]
+        ]
+    },
+    {
+        "id": "3002d1dd1b379",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "SET DCFanOutputAdjustment",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"request\":\"SET\",\"variable\":\"DCFanOutputAdjustment\",\"value\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 1600,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3002dbc092d2a",
+        "type": "ui_slider",
+        "z": "e1a2b3c4d5f60003",
+        "name": "Abluftventilator (%)",
+        "label": "Abluftventilator (%)",
+        "tooltip": "",
+        "group": "30004538453d7",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 1600,
+        "wires": [
+            [
+                "3002d1dd1b379"
+            ]
+        ],
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "outs": "end"
+    },
+    {
+        "id": "3002e5a40a6db",
+        "type": "change",
+        "z": "e1a2b3c4d5f60003",
+        "name": "DCFanOutputAdjustment",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.DCFanOutputAdjustment",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1640,
+        "wires": [
+            [
+                "3002dbc092d2a"
+            ]
+        ]
+    },
+    {
+        "id": "3002ef878208c",
+        "type": "function",
+        "z": "e1a2b3c4d5f60003",
+        "name": "nächstes Register abfragen",
+        "func": "// Nur 2AH, 2BH, 2CH und 32H-35H kommen unaufgefordert. Alles andere muss abgefragt werden -\n// eines pro Takt, damit der Bus ruhig bleibt: die Bedienteile fragen auch ab.\nconst registers = [\"FanSpeed\",\"Select\",\"IoPortMultiPurpose2\",\"LastErrorNumber\",\"HeatingSetPoint\",\"PreHeatingSetPoint\",\"HRCBypass\",\"FanSpeedMin\",\"FanSpeedMax\",\"DCFanInputAdjustment\",\"DCFanOutputAdjustment\"];\nconst i = (context.get(\"i\") || 0) % registers.length;\ncontext.set(\"i\", i + 1);\nmsg.payload = { request: \"GET\", variable: registers[i] };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1680,
+        "wires": [
+            [
+                "300058ff34739"
+            ]
+        ]
+    },
+    {
+        "id": "3002f96af9a3d",
+        "type": "inject",
+        "z": "e1a2b3c4d5f60003",
+        "name": "alle 3 s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 1680,
+        "wires": [
+            [
+                "3002ef878208c",
+                "300163fcd1ce4"
+            ]
+        ]
+    }
+]

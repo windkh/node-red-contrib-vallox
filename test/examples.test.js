@@ -20,6 +20,7 @@ describe('example flows', function () {
             'valloxtx.json',
             'vallox-commands.json',
             'vallox-monitor.json',
+            'vallox-dashboard.json',
         ]) {
             assert.ok(files.includes(expected), `${expected} is missing`);
         }
@@ -103,6 +104,82 @@ describe('example flows', function () {
                     Number.isInteger(arg) && arg >= 0 && arg <= 255,
                     `${req.variable} = ${req.value} encodes to ${arg}, which is not a byte`
                 );
+            }
+        });
+    });
+
+    describe('vallox-dashboard.json', function () {
+        const nodes = JSON.parse(fs.readFileSync(path.join(DIR, 'vallox-dashboard.json'), 'utf8'));
+
+        it('references only variables the package implements', function () {
+            // the register names live inside JSONata strings and function bodies, so scan the raw
+            // text and tolerate whatever escaping the surrounding JSON applied
+            // two forms appear: \"variable\":\"Name\" inside a JSONata string, and
+            // variable: "Name" inside a function body, so the quote before the colon is optional
+            const raw = fs.readFileSync(path.join(DIR, 'vallox-dashboard.json'), 'utf8');
+            const named = new Set([...raw.matchAll(/variable\\*"?\s*:\s*\\*"([A-Za-z0-9]+)/g)].map((m) => m[1]));
+            assert.ok(named.size >= 8, `expected many registers, found ${named.size}: ${[...named]}`);
+            assert.ok(named.has('Select'), 'the Select read-modify-write should be exercised');
+            assert.ok(named.has('FanSpeed'), 'the fan speed control should be exercised');
+            for (const name of named) {
+                assert.notStrictEqual(vallox.convert(name, 1).command, undefined, `unknown variable ${name}`);
+            }
+        });
+
+        it('shows all four temperatures', function () {
+            // They went missing once: the group holding them was lost on import, and a dashboard
+            // without the four air temperatures is not much of a ventilation dashboard.
+            const raw = fs.readFileSync(path.join(DIR, 'vallox-dashboard.json'), 'utf8');
+            for (const field of [
+                'TemperatureOutside',
+                'TemperatureIncoming',
+                'TemperatureInside',
+                'TemperatureExhaust',
+            ]) {
+                assert.ok(raw.includes(field), `${field} is not on the dashboard`);
+            }
+        });
+
+        it('ships no ui_base, which would collide with an existing dashboard', function () {
+            assert.strictEqual(nodes.filter((n) => n.type === 'ui_base').length, 0);
+        });
+
+        it('wires every input widget to something', function () {
+            for (const w of nodes.filter((n) => /^ui_(slider|numeric|switch|button)$/.test(n.type))) {
+                assert.ok((w.wires[0] || []).length > 0, `${w.name} sends nowhere`);
+            }
+        });
+
+        it('only writes registers that are writable', function () {
+            const writes = nodes.filter((n) => /^SET /.test(n.name || ''));
+            assert.ok(writes.length > 5, 'expected several write handlers');
+            for (const node of writes) {
+                // handlers are named "SET FanSpeed" or "SET Select.PowerState"
+                const variable = node.name.replace(/^SET /, '').split('.')[0];
+                assert.strictEqual(vallox.convert(variable, 1).readonly, false, `${variable} is readonly`);
+            }
+        });
+
+        it('wires every widget to a group that belongs to a tab', function () {
+            const byId = new Map(nodes.map((n) => [n.id, n]));
+            const groups = nodes.filter((n) => n.type === 'ui_group');
+            assert.ok(groups.length > 0);
+            for (const group of groups) {
+                assert.strictEqual(byId.get(group.tab)?.type, 'ui_tab', `${group.name} has no tab`);
+            }
+            for (const widget of nodes.filter((n) => /^ui_/.test(n.type) && n.group)) {
+                assert.strictEqual(byId.get(widget.group)?.type, 'ui_group', `${widget.type} has no group`);
+            }
+        });
+
+        it('polls only registers the master does not broadcast', function () {
+            const poller = nodes.find((n) => n.type === 'function' && /abfragen/.test(n.name || ''));
+            assert.ok(poller, 'expected a poll rotation');
+            const listed = [...poller.func.matchAll(/"([A-Z][A-Za-z0-9]+)"/g)].map((m) => m[1]);
+            assert.ok(listed.length >= 8, 'expected a rotation of registers');
+            for (const name of listed) {
+                assert.notStrictEqual(vallox.convert(name, 1).command, undefined, `unknown variable ${name}`);
+                assert.ok(!/^Temperature/.test(name), `${name} is broadcast, polling it wastes bus time`);
             }
         });
     });
