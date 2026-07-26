@@ -7,27 +7,26 @@
         category: 'Vallox',
         color: '#DDDDDD',
         defaults: {
-			description: { value:"" },
+            description: { value: '' },
         },
         inputs: 1,
         outputs: 2,
-        icon: "valloxrx.png",
-        paletteLabel: "vallox RX",
+        icon: 'valloxrx.png',
+        paletteLabel: 'vallox RX',
         label: function () {
-            return this.description || "Vallox RX";
+            return this.description || 'Vallox RX';
         },
-        labelStyle: function() {
-            return this.description?"node_label_italic":"";
-        }
+        labelStyle: function () {
+            return this.description ? 'node_label_italic' : '';
+        },
     });
-
 </script>
 
 <script type="text/x-red" data-template-name="valloxrx">
     <div class="form-row">
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
         <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
-    </div>  
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="valloxrx">
@@ -63,7 +62,6 @@
     </ol>
 </script>
 
-
 <!-- ------------------------------------------------------------------------------------------ -->
 
 <script type="text/javascript">
@@ -71,27 +69,26 @@
         category: 'Vallox',
         color: '#DDDDDD',
         defaults: {
-			description: { value:"" },
+            description: { value: '' },
         },
         inputs: 1,
         outputs: 2,
-        icon: "valloxtx.png",
-        paletteLabel: "vallox TX",
+        icon: 'valloxtx.png',
+        paletteLabel: 'vallox TX',
         label: function () {
-            return this.description || "Vallox TX";
+            return this.description || 'Vallox TX';
         },
-        labelStyle: function() {
-            return this.description?"node_label_italic":"";
-        }
+        labelStyle: function () {
+            return this.description ? 'node_label_italic' : '';
+        },
     });
-
 </script>
 
 <script type="text/x-red" data-template-name="valloxtx">
     <div class="form-row">
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
         <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
-    </div>  
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="valloxtx">
@@ -126,7 +123,6 @@
     </ol>
 </script>
 
-
 <!-- ------------------------------------------------------------------------------------------ -->
 
 <script type="text/javascript">
@@ -134,29 +130,28 @@
         category: 'Vallox',
         color: '#DDDDDD',
         defaults: {
-			description: { value: "", required: true },
-        	receiver: { value: "33" , required: true},
+            description: { value: '', required: true },
+            receiver: { value: '33', required: true },
             sendonnewdata: { value: true, required: true },
         },
         inputs: 1,
         outputs: 3,
-        icon: "vallox.png",
-        paletteLabel: "vallox",
+        icon: 'vallox.png',
+        paletteLabel: 'vallox',
         label: function () {
-            return this.description || "Vallox";
+            return this.description || 'Vallox';
         },
-        labelStyle: function() {
-            return this.description?"node_label_italic":"";
-        }
+        labelStyle: function () {
+            return this.description ? 'node_label_italic' : '';
+        },
     });
-
 </script>
 
 <script type="text/x-red" data-template-name="vallox">
     <div class="form-row">
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
         <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
-    </div> 
+    </div>
     <div class="form-row">
         <label for="node-input-receiver"><i class="fa fa-address-card"></i> Receiver</label>
         <select id="node-config-input-receiver">

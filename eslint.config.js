@@ -2,6 +2,7 @@
 
 const js = require('@eslint/js');
 const globals = require('globals');
+const prettier = require('eslint-config-prettier');
 
 module.exports = [
     js.configs.recommended,
@@ -22,14 +23,8 @@ module.exports = [
         },
     },
     {
-        files: ['test/**/*.js'],
-        languageOptions: {
-            globals: {
-                ...globals.mocha,
-            },
-        },
-    },
-    {
         ignores: ['node_modules/**', 'examples/**'],
     },
+    // Must stay last: turns off every rule Prettier owns.
+    prettier,
 ];

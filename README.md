@@ -1,4 +1,5 @@
 # Vallox nodes for node-red
+
 [![Platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 ![License](https://img.shields.io/github/license/windkh/node-red-contrib-vallox.svg)
 [![NPM](https://img.shields.io/npm/v/node-red-contrib-vallox?logo=npm)](https://www.npmjs.org/package/node-red-contrib-vallox)
@@ -12,18 +13,19 @@
 
 This package contains nodes for controlling vallox devices via the serial RS485 API.
 You must connect the RS485 bus and read the data using e.g. an RS485 to serial converter.
-Then use a serial node to read the data and feed it to the node. 
+Then use a serial node to read the data and feed it to the node.
 
 # Dependencies
+
 This package depends on the following libraries
 
-
 # Disclaimer
+
 This package is not developed nor officially supported by the company Vallox.
 It is for demonstrating how to communicate to the devices using node-red.
 
-
 # Thanks for your donation
+
 If you want to support this free project. Any help is welcome. You can donate by clicking one of the following links:
 
 <a target="blank" href="https://blockchain.com/btc/payment_request?address=1PBi7BoZ1mBLQx4ePbwh1MVoK2RaoiDsp5"><img src="https://img.shields.io/badge/Donate-Bitcoin-green.svg"/></a>
@@ -31,13 +33,11 @@ If you want to support this free project. Any help is welcome. You can donate by
 
 <a href="https://www.buymeacoffee.com/windka" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-
 # Credits
 
-
 # Changelog
-Changes can be followed [here](/CHANGELOG.md)
 
+Changes can be followed [here](/CHANGELOG.md)
 
 # Getting started
 
@@ -56,7 +56,6 @@ serial in / mqtt in  -->  valloxrx  -->  vallox  -->  valloxtx  -->  serial out 
 - **vallox** keeps the latest value of each variable seen for a configured device address (panel or master) and turns request objects into outgoing frames.
 - **valloxtx** serialises an outgoing frame to the 6-byte buffer that goes on the wire.
 
-
 # Vallox RX Node
 
 Decodes Vallox RS485 telegrams (6-byte frames) from a raw byte stream. Incoming bytes are buffered until a complete frame is available; misaligned leading bytes are dropped at the next start byte (`0x01`).
@@ -66,7 +65,6 @@ Decodes Vallox RS485 telegrams (6-byte frames) from a raw byte stream. Incoming 
 - **Output 2** — error string (bad checksum, wrong frame length, …).
 
 See [`examples/valloxrx.json`](examples/valloxrx.json) for a minimal RX-only flow.
-
 
 # Vallox TX Node
 
@@ -78,7 +76,6 @@ Encodes a telegram object into a 6-byte frame, ready for the bus. Normally fed b
 
 See [`examples/valloxtx.json`](examples/valloxtx.json) for a minimal TX-only flow.
 
-
 # Vallox Node
 
 Holds the in-memory state of one Vallox device (panel or master) and generates outgoing requests.
@@ -86,9 +83,9 @@ Holds the in-memory state of one Vallox device (panel or master) and generates o
 **Configuration**
 
 - **Receiver** — RS485 address of the device this node represents:
-  - Panel 1-7: `33`-`39` (0x21-0x27)
-  - LON: `40` (0x28)
-  - Master 1: `17` (0x11)
+    - Panel 1-7: `33`-`39` (0x21-0x27)
+    - LON: `40` (0x28)
+    - Master 1: `17` (0x11)
 - **Send msg on new data** — when checked, output 1 fires every time a matching `SET` frame updates the state.
 
 **Inputs** (one of three shapes on `msg.payload`):
@@ -104,7 +101,6 @@ Holds the in-memory state of one Vallox device (panel or master) and generates o
 3. Error string — e.g. an attempt to `SET` a readonly variable.
 
 See [`examples/vallox.json`](examples/vallox.json) for a complete RX + state + TX + MQTT flow.
-
 
 # Example: setting the fan speed
 
@@ -124,7 +120,6 @@ The same shape is used for every writable variable — look at [`vallox/vallox.j
 Reading the current state is even simpler: send any non-empty message (or an empty inject) to the **vallox** node and it emits the latest cached state on output 1.
 
 The full flow with fan-speed injection buttons, an HTTP state endpoint and an MQTT bridge is in [`examples/vallox.json`](examples/vallox.json).
-
 
 # License
 

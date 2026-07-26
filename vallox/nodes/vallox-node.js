@@ -1,52 +1,49 @@
 /**
-* Created by Karl-Heinz Wind
-**/
+ * Created by Karl-Heinz Wind
+ **/
 
 const vallox = require('../vallox.js');
 
 // The vallox node.
 module.exports = function (RED) {
-    "use strict";
+    'use strict';
 
     function ValloxNode(config) {
         RED.nodes.createNode(this, config);
         let node = this;
         let sendOnNewData = config.sendonnewdata;
-        let receiver = config.receiver & 0xFF;
-        let receiverGroup = receiver & 0xF0;
+        let receiver = config.receiver & 0xff;
+        let receiverGroup = receiver & 0xf0;
         let state = {
-            Receiver : receiver
+            Receiver: receiver,
         };
 
-        this.createMessage = function(request, variable, value, messageHandler, errorHandler){
-
+        this.createMessage = function (request, variable, value, messageHandler, errorHandler) {
             let sender = receiver;
             let result = vallox.convert(variable, value);
             let command = result.command;
             let arg = result.arg;
 
             if (request !== vallox.constants.VALLOX_GET) {
-                if (result.readonly){
-                    errorHandler("Variable " + variable + " is readonly.");
+                if (result.readonly) {
+                    errorHandler('Variable ' + variable + ' is readonly.');
                     return;
                 }
             }
 
             let message = {
-                domain : vallox.constants.VALLOX_DOMAIN,
-                sender : sender,
-                receiver : vallox.constants.VALLOX_MASTER,
-                command : command,
-                arg : arg,
-            }
+                domain: vallox.constants.VALLOX_DOMAIN,
+                sender: sender,
+                receiver: vallox.constants.VALLOX_MASTER,
+                command: command,
+                arg: arg,
+            };
             messageHandler(message);
         };
 
         this.on('input', async function (msg) {
-
             let message = msg.payload;
-            if (message !== undefined)
-            {
+            if (message !== undefined) {
                 // Input from RX node
                 if (Object.prototype.hasOwnProperty.call(message, 'receiver')) {
                     let newData = false;
@@ -63,37 +60,39 @@ module.exports = function (RED) {
                         msg.payload = state;
                         node.send([msg]);
                     }
-                }
-                else if (Object.prototype.hasOwnProperty.call(message, 'request')) {
+                } else if (Object.prototype.hasOwnProperty.call(message, 'request')) {
                     let request = message.request;
                     let variable = message.variable;
                     let value = message.value;
 
-                    node.createMessage(request, variable, value, function (message) {
-                        msg.payload = message;
-                        node.send([null, msg]);
-                    }, function (errorMessage) {
-                        node.warn(errorMessage);
-                        msg.payload = errorMessage;
-                        node.send([null, null, msg]);
-                    });
-                }
-                else {
+                    node.createMessage(
+                        request,
+                        variable,
+                        value,
+                        function (message) {
+                            msg.payload = message;
+                            node.send([null, msg]);
+                        },
+                        function (errorMessage) {
+                            node.warn(errorMessage);
+                            msg.payload = errorMessage;
+                            node.send([null, null, msg]);
+                        }
+                    );
+                } else {
                     msg.payload = state;
                     node.send([msg]);
                 }
-            }
-            else
-            {
+            } else {
                 msg.payload = state;
                 node.send([msg]);
             }
         });
 
-        this.on('close', function(done) {
+        this.on('close', function (done) {
             node.status({});
             done();
         });
     }
-    RED.nodes.registerType("vallox", ValloxNode);
-}
+    RED.nodes.registerType('vallox', ValloxNode);
+};

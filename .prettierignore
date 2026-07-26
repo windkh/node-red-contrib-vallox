@@ -1,0 +1,7 @@
+# Node-RED editor exports — re-exporting from the editor would fight Prettier on every change.
+examples/
+
+# Verbatim extract of the protocol PDF.
+doc/protocol.txt
+
+package-lock.json
