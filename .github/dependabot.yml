@@ -5,7 +5,18 @@ updates:
       schedule:
           interval: weekly
       open-pull-requests-limit: 5
+      groups:
+          # eslint and @eslint/js share a peer range: bumping one alone makes `npm ci` unresolvable.
+          eslint:
+              patterns:
+                  - eslint
+                  - '@eslint/*'
+                  - eslint-config-*
     - package-ecosystem: github-actions
       directory: /
       schedule:
           interval: weekly
+      groups:
+          actions:
+              patterns:
+                  - '*'

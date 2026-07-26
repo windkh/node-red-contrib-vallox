@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.19]
+
+### Dependency sweep: ESLint 10, c8 12, Actions v7
+
+- ESLint 9 → 10 with `@eslint/js` in lockstep. Dependabot could only offer `@eslint/js@10` on its own, which left `npm ci` unresolvable (`@eslint/js@10` declares `peerOptional eslint@^10` against the root's `eslint@9`). The existing flat config needed no changes.
+- `eslint-config-prettier` 9 → 10, `c8` 10 → 12, `actions/checkout` and `actions/setup-node` → v7.
+- Grouped the eslint packages in `dependabot.yml` so they are always bumped in one PR, and grouped the Actions updates into one PR as well.
+
 ## [0.1.18]
 
 ### Bump the GitHub Actions to v5
