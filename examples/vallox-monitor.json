@@ -1,0 +1,618 @@
+[
+    {
+        "id": "10015035e2982",
+        "type": "comment",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Monitoring: decode the bus and cache every variable",
+        "info": "The master broadcasts only seven registers (2AH 2BH 2CH 32H-35H) every\n12 seconds. Everything else must be polled with a GET request - see the\npoll branch at the bottom.\n\nReplace the injects with your serial in / mqtt in node: valloxrx takes\nraw bytes and does its own framing, so partial chunks are fine.\n\nThe injects below replay real frames (master 0x11 -> all panels 0x20)\nso the flow can be tried without hardware. One carries a deliberately\nbroken checksum to exercise the error output.\n\n\"read cached state\" sends an empty payload, which makes the vallox node\nemit its whole snapshot on output 1.",
+        "x": 240,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "10015a195a333",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "FanSpeed = 8",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,41,255,90]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "100163fcd1ce4",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "TemperatureOutside = -3 °C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,50,90,190]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "10016de049695",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "TemperatureExhaust = 9 °C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,51,128,229]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 180,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "100177c3c1046",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "TemperatureInside = 21 °C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,52,162,8]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "100181a7389f7",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "TemperatureIncoming = 17 °C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,53,152,255]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 260,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "10018b8ab03a8",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Humidity = 37.7 %RH",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,42,128,220]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 300,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001956e27d59",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "CO2High = 3 (high byte)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,43,3,96]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 340,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "10019f519f70a",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Flags2 - CO2 alarm",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,109,64,223]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 380,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001a935170bb",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Flags6 - booster running",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,113,64,227]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 420,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001b3188ea6c",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Select - indicator lights",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,163,15,228]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 460,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001bcfc0641d",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "LastErrorNumber = \"No error\"",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,54,0,104]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001c6df7ddce",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "IoPortFanSpeedRelays - speeds 1-4 energised",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,6,15,71]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 540,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "1001d0c2f577f",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "bad checksum (goes to output 2)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1,17,32,41,255,91]",
+        "payloadType": "bin",
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "10011ec48c90d"
+            ]
+        ]
+    },
+    {
+        "id": "10011ec48c90d",
+        "type": "valloxrx",
+        "z": "a1b2c3d4e5f60001",
+        "name": "",
+        "description": "",
+        "x": 620,
+        "y": 340,
+        "wires": [
+            [
+                "100128a8042be",
+                "10013c6ef3620"
+            ],
+            [
+                "100146526afd1"
+            ]
+        ]
+    },
+    {
+        "id": "100128a8042be",
+        "type": "vallox",
+        "z": "a1b2c3d4e5f60001",
+        "name": "panel 1 shadow",
+        "description": "Panel 1",
+        "receiver": 33,
+        "sendonnewdata": true,
+        "x": 820,
+        "y": 340,
+        "wires": [
+            [
+                "1001328b7bc6f"
+            ],
+            [
+                "1001daa66d130"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1001daa66d130",
+        "type": "valloxtx",
+        "z": "a1b2c3d4e5f60001",
+        "name": "encode poll",
+        "description": "",
+        "x": 1020,
+        "y": 740,
+        "wires": [
+            [
+                "1001e489e4ae1"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1001ee6d5c492",
+        "type": "comment",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Poll a register the master does not broadcast",
+        "info": "A GET telegram carries 0x00 in the command byte and the register in the argument.\nThe reply arrives as ordinary bus traffic and lands in the cache.",
+        "x": 300,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "1001f850d3e43",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "GET FanSpeed",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"GET\",\"variable\":\"FanSpeed\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 740,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "100202344b7f4",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "GET Select",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"GET\",\"variable\":\"Select\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 780,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "10020c17c31a5",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "GET FanSpeedMax",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"GET\",\"variable\":\"FanSpeedMax\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 820,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "100215fb3ab56",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "GET HeatingSetPoint",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"GET\",\"variable\":\"HeatingSetPoint\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 860,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "10021fdeb2507",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "GET LastErrorNumber",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"GET\",\"variable\":\"LastErrorNumber\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 900,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "100229c229eb8",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "read cached state",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 620,
+        "y": 860,
+        "wires": [
+            [
+                "100128a8042be"
+            ]
+        ]
+    },
+    {
+        "id": "1001e489e4ae1",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "poll telegram to the bus",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "10013c6ef3620",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "decoded frame",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "1001328b7bc6f",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "cached state",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "100146526afd1",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "decode error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 420,
+        "wires": []
+    }
+]

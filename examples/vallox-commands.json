@@ -1,0 +1,644 @@
+[
+    {
+        "id": "10004538453d7",
+        "type": "comment",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Every writable Vallox variable, one inject each",
+        "info": "Each inject sends a SET request to the vallox node.\n\nOutput 2 carries the telegram, which valloxtx turns into 6 bytes.\nReplace the \"bytes to the bus\" debug node with your serial out / mqtt out node.\n\nOutput 3 receives errors, e.g. a SET aimed at a read-only variable.\nSee the command reference in the README for units and ranges.",
+        "x": 200,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "10004f1bbcd88",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "FanSpeed = 4  (speed 1-8)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"FanSpeed\",\"value\":4}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100058ff34739",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "FanSpeedMax = 8  (ceiling for automatic adjustment)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"FanSpeedMax\",\"value\":8}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100062e2ac0ea",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "FanSpeedMin = 1  (basic speed)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"FanSpeedMin\",\"value\":1}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 180,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "10006cc623a9b",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "HeatingSetPoint = 20  (post-heating target, °C)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"HeatingSetPoint\",\"value\":20}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100076a99b44c",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "PreHeatingSetPoint = 0  (pre-heating switch-on, °C)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"PreHeatingSetPoint\",\"value\":0}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 260,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000808d12dfd",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "InputFanStop = 5  (supply fan stops below, °C)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"InputFanStop\",\"value\":5}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 300,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "10008a708a7ae",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "HRCBypass = 5  (cell bypass temperature, °C)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"HRCBypass\",\"value\":5}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 340,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100094540215f",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "PostHeatingOnCounter = 40  (% of the post-heating on-time counter)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"PostHeatingOnCounter\",\"value\":40}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 380,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "10009e3779b10",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "PostHeatingOffTime = 40  (% of the post-heating off-time counter)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"PostHeatingOffTime\",\"value\":40}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 420,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000a81af14c1",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "CellDefrostingHysteresis = 3  (°C of hysteresis)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"CellDefrostingHysteresis\",\"value\":3}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 460,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000b1fe68e72",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "ServiceReminder = 12  (reminder interval in months)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"ServiceReminder\",\"value\":12}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000bbe1e0823",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "MaintenanceMonthCounter = 6  (months until next service)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"MaintenanceMonthCounter\",\"value\":6}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 540,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000c5c5581d4",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "BasicHumidityLevel = 40  (%RH threshold)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"BasicHumidityLevel\",\"value\":40}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000cfa8cfb85",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "DCFanInputAdjustment = 80  (% supply fan setpoint)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"DCFanInputAdjustment\",\"value\":80}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 620,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000d98c47536",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "DCFanOutputAdjustment = 80  (% exhaust fan setpoint)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"DCFanOutputAdjustment\",\"value\":80}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 660,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000e36fbeee7",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "CO2SetPointUpper = 3  (high byte of 900 ppm)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"CO2SetPointUpper\",\"value\":3}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 700,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000ed5336898",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "CO2SetPointLower = 132  (low byte of 900 ppm)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"CO2SetPointLower\",\"value\":132}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 740,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1000f736ae249",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Select = {\"PowerState\":true,\"Co2AdjustState\":false,\"HumidityAdjustState\":true,\"HeatingState\":true}  (panel keys, bits 0-3)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"Select\",\"value\":{\"PowerState\":true,\"Co2AdjustState\":false,\"HumidityAdjustState\":true,\"HeatingState\":true}}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 780,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "1001011a25bfa",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Flags6 = {\"FirePlaceSwitchActivator\":true}  (bit 5 starts the fireplace/booster)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"Flags6\",\"value\":{\"FirePlaceSwitchActivator\":true}}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 820,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "10010afd9d5ab",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Program = {\"AdjustmentIntervalMinutes\":8,\"AutomaticHumidityLevelSeekerState\":true,\"BoostSwitchMode\":true,\"RadiatorType\":false,\"CascadeAdjust\":false}  (adjustment interval and mode bits)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"Program\",\"value\":{\"AdjustmentIntervalMinutes\":8,\"AutomaticHumidityLevelSeekerState\":true,\"BoostSwitchMode\":true,\"RadiatorType\":false,\"CascadeAdjust\":false}}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 860,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100114e114f5c",
+        "type": "inject",
+        "z": "a1b2c3d4e5f60001",
+        "name": "Program2 = {\"MaxSpeedLimitMode\":true}  (max speed limit always on)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"SET\",\"variable\":\"Program2\",\"value\":{\"MaxSpeedLimitMode\":true}}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 900,
+        "wires": [
+            [
+                "100009e3779b1"
+            ]
+        ]
+    },
+    {
+        "id": "100009e3779b1",
+        "type": "vallox",
+        "z": "a1b2c3d4e5f60001",
+        "name": "panel 1",
+        "description": "Panel 1",
+        "receiver": 33,
+        "sendonnewdata": true,
+        "x": 620,
+        "y": 520,
+        "wires": [
+            [
+                "1000278dde6c4"
+            ],
+            [
+                "100013c6ef362"
+            ],
+            [
+                "1000317156075"
+            ]
+        ]
+    },
+    {
+        "id": "100013c6ef362",
+        "type": "valloxtx",
+        "z": "a1b2c3d4e5f60001",
+        "name": "",
+        "description": "",
+        "x": 800,
+        "y": 520,
+        "wires": [
+            [
+                "10001daa66d13"
+            ],
+            [
+                "10003b54cda26"
+            ]
+        ]
+    },
+    {
+        "id": "1000278dde6c4",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "state snapshot",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "10001daa66d13",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "bytes to the bus",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "10003b54cda26",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "encode error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1000317156075",
+        "type": "debug",
+        "z": "a1b2c3d4e5f60001",
+        "name": "rejected request",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 600,
+        "wires": []
+    }
+]

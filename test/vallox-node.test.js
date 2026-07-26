@@ -123,17 +123,136 @@ describe('vallox node', function () {
         });
     });
 
-    it('builds an outgoing telegram for a SET request on output 2', function (t, done) {
+    it('writes a register the way a real panel does', function (t, done) {
+        // Observed on a live bus for every one of 14 fan-speed changes made from the original
+        // control unit: mainboard first with the checksum sent twice, then all panels, then all
+        // mainboards.
+        load({}, ({ n1, tx }) => {
+            const seen = [];
+            tx.on('input', (msg) => {
+                seen.push(msg.payload);
+                if (seen.length < 3) {
+                    return;
+                }
+                try {
+                    for (const telegram of seen) {
+                        assertSubset(telegram, {
+                            domain: 0x01,
+                            sender: 33,
+                            command: 0x29,
+                            arg: 0x07, // FanSpeed level 3
+                        });
+                    }
+                    assert.deepStrictEqual(
+                        seen.map((s) => s.receiver),
+                        [0x11, 0x20, 0x10]
+                    );
+                    assert.strictEqual(seen[0].repeatChecksum, true, 'the mainboard write repeats its checksum');
+                    assert.ok(!seen[1].repeatChecksum, 'the broadcasts do not');
+                    assert.ok(!seen[2].repeatChecksum);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+            n1.receive({ payload: { request: 'SET', variable: 'FanSpeed', value: 3 } });
+        });
+    });
+
+    it('sends a single telegram when the panel sequence is switched off', function (t, done) {
+        load({ writesequence: false }, ({ n1, tx }) => {
+            const seen = [];
+            tx.on('input', (msg) => seen.push(msg.payload));
+            n1.receive({ payload: { request: 'SET', variable: 'FanSpeed', value: 3 } });
+            setTimeout(() => {
+                try {
+                    assert.strictEqual(seen.length, 1);
+                    assertSubset(seen[0], { receiver: 0x11, command: 0x29, arg: 0x07 });
+                    assert.strictEqual(seen[0].repeatChecksum, true);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            }, 60);
+        });
+    });
+
+    it('sends a read request as one telegram, without repeating the checksum', function (t, done) {
+        load({}, ({ n1, tx }) => {
+            const seen = [];
+            tx.on('input', (msg) => seen.push(msg.payload));
+            n1.receive({ payload: { request: 'GET', variable: 'FanSpeed' } });
+            setTimeout(() => {
+                try {
+                    assert.strictEqual(seen.length, 1);
+                    assertSubset(seen[0], { receiver: 0x11, command: 0x00, arg: 0x29 });
+                    assert.ok(!seen[0].repeatChecksum);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            }, 60);
+        });
+    });
+
+    it('builds a read request with 0x00 in the command byte and the register in arg', function (t, done) {
         load({}, ({ n1, tx }) => {
             tx.on('input', (msg) => {
                 try {
+                    // "PYYNTÖ: asetettava aina 0:ksi" - the request byte is always 0 and the
+                    // register being asked for travels in the argument.
                     assertSubset(msg.payload, {
                         domain: 0x01,
                         sender: 33,
                         receiver: 0x11,
-                        command: 0x29,
-                        arg: 0x07, // FanSpeed level 3
+                        command: 0x00,
+                        arg: 0x34, // TemperatureInside
                     });
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+            n1.receive({ payload: { request: 'GET', variable: 'TemperatureInside' } });
+        });
+    });
+
+    it('allows a GET of a readonly variable', function (t, done) {
+        load({}, ({ n1, tx, err }) => {
+            err.on('input', (msg) => done(new Error('unexpected error: ' + msg.payload)));
+            tx.on('input', (msg) => {
+                try {
+                    assert.strictEqual(msg.payload.command, 0x00);
+                    assert.strictEqual(msg.payload.arg, 0x32);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+            n1.receive({ payload: { request: 'GET', variable: 'TemperatureOutside' } });
+        });
+    });
+
+    it('rejects an unknown variable instead of emitting a malformed telegram', function (t, done) {
+        load({}, ({ n1, tx, err }) => {
+            tx.on('input', () => done(new Error('a telegram was emitted for an unknown variable')));
+            err.on('input', (msg) => {
+                try {
+                    assert.match(msg.payload, /unknown variable/i);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+            n1.receive({ payload: { request: 'SET', variable: 'NoSuchVariable', value: 1 } });
+        });
+    });
+
+    it('writes a modified Select object back as a single byte', function (t, done) {
+        load({}, ({ n1, tx }) => {
+            tx.on('input', (msg) => {
+                try {
+                    assertSubset(msg.payload, { command: 0xa3, arg: 0x0d });
                     done();
                 } catch (e) {
                     done(e);
@@ -142,10 +261,55 @@ describe('vallox node', function () {
             n1.receive({
                 payload: {
                     request: 'SET',
-                    variable: 'FanSpeed',
-                    value: 3,
+                    variable: 'Select',
+                    value: {
+                        PowerState: true,
+                        Co2AdjustState: false,
+                        HumidityAdjustState: true,
+                        HeatingState: true,
+                    },
                 },
             });
+        });
+    });
+
+    it('refuses to transmit while the bus is suspended, and resumes after 8FH', function (t, done) {
+        load({}, ({ n1, tx, err }) => {
+            let sent = 0;
+            let rejected = 0;
+            tx.on('input', () => sent++);
+            err.on('input', (msg) => {
+                if (/suspended/i.test(msg.payload)) rejected++;
+            });
+
+            // 91H prohibits sending; broadcast to all panels
+            n1.receive({ payload: { receiver: 0x20, command: 0x91, request: 'SET', variable: 'Suspend', value: 0 } });
+            n1.receive({ payload: { request: 'SET', variable: 'FanSpeed', value: 3 } });
+
+            setTimeout(() => {
+                try {
+                    assert.strictEqual(sent, 0, 'nothing may be transmitted while suspended');
+                    assert.strictEqual(rejected, 1, 'the request should surface on the error output');
+
+                    // 8FH allows sending again
+                    n1.receive({
+                        payload: { receiver: 0x20, command: 0x8f, request: 'SET', variable: 'Resume', value: 0 },
+                    });
+                    n1.receive({ payload: { request: 'SET', variable: 'FanSpeed', value: 3 } });
+
+                    setTimeout(() => {
+                        try {
+                            // a write is the three-telegram panel sequence
+                            assert.strictEqual(sent, 3, 'transmission should resume');
+                            done();
+                        } catch (e) {
+                            done(e);
+                        }
+                    }, 40);
+                } catch (e) {
+                    done(e);
+                }
+            }, 40);
         });
     });
 

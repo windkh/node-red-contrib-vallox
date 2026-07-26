@@ -438,15 +438,103 @@ function convertProgram(value) {
 function convertProgram2(value) {
     let result = {
         MaxSpeedLimitMode: (value & 0x01) != 0, // 0 = with adjustment, 1 = always
+        // Bits 1-7 are undefined in the protocol document. They are reported so that a
+        // decoded object can be written back without losing what the unit had set.
+        Bit1: (value & 0x02) != 0,
+        Bit2: (value & 0x04) != 0,
+        Bit3: (value & 0x08) != 0,
+        Bit4: (value & 0x10) != 0,
+        Bit5: (value & 0x20) != 0,
+        Bit6: (value & 0x40) != 0,
+        Bit7: (value & 0x80) != 0,
     };
 
     return result;
 }
 
-// 33H = 0% FFH = 100%
+// Inverses of the bit decoders above, for the variables the protocol allows writing.
+// A number is taken as an already-composed byte; an object is composed field by field, so a
+// value decoded from the bus can be modified and written straight back (read-modify-write).
+function composeBits(value, bits) {
+    if (typeof value !== 'object' || value === null) {
+        return value;
+    }
+
+    let raw = 0;
+    for (const [mask, field] of bits) {
+        if (field === 'AdjustmentIntervalMinutes') {
+            raw |= (value[field] || 0) & mask;
+        } else if (value[field]) {
+            raw |= mask;
+        }
+    }
+
+    return raw;
+}
+
+const SELECT_BITS = [
+    [0x01, 'PowerState'],
+    [0x02, 'Co2AdjustState'],
+    [0x04, 'HumidityAdjustState'],
+    [0x08, 'HeatingState'],
+    [0x10, 'FilterGuardIndicator'],
+    [0x20, 'HeatingIndicator'],
+    [0x40, 'FaultIndicator'],
+    [0x80, 'ServiceReminderIndicator'],
+];
+
+// Only bits 0-3 may be written; the indicator lamps in 4-7 are read only. The read-only bits
+// are still sent back unchanged so the unit sees the value it reported.
+function convertSelectBack(value) {
+    return composeBits(value, SELECT_BITS);
+}
+
+function convertFlags6Back(value) {
+    return composeBits(value, [
+        [0x01, 'Bit0'],
+        [0x02, 'Bit1'],
+        [0x04, 'Bit2'],
+        [0x08, 'Bit3'],
+        [0x10, 'RemoteMonitoringControl'],
+        [0x20, 'FirePlaceSwitchActivator'],
+        [0x40, 'FirePlaceBoosterStatus'],
+        [0x80, 'Bit7'],
+    ]);
+}
+
+function convertProgramBack(value) {
+    return composeBits(value, [
+        [0x0f, 'AdjustmentIntervalMinutes'],
+        [0x10, 'AutomaticHumidityLevelSeekerState'],
+        [0x20, 'BoostSwitchMode'],
+        [0x40, 'RadiatorType'],
+        [0x80, 'CascadeAdjust'],
+    ]);
+}
+
+function convertProgram2Back(value) {
+    return composeBits(value, [
+        [0x01, 'MaxSpeedLimitMode'],
+        [0x02, 'Bit1'],
+        [0x04, 'Bit2'],
+        [0x08, 'Bit3'],
+        [0x10, 'Bit4'],
+        [0x20, 'Bit5'],
+        [0x40, 'Bit6'],
+        [0x80, 'Bit7'],
+    ]);
+}
+
+// 33H = 0 %RH, FFH = 100 %RH, calculation formula (x - 51) / 2.04.
+// Stated for 2AH, 2FH, 30H and AEH in the protocol document.
 function convertHumidity(value) {
-    let humidity = value; // (value-51)/2.04; <-- seems to be wrong.
-    return humidity;
+    let humidity = (value - 51) / 2.04;
+    return Math.round(humidity * 10) / 10;
+}
+
+function convertHumidityBack(value) {
+    let raw = Math.round(value * 2.04 + 51);
+    return Math.min(255, Math.max(0, raw));
 }
 
 // percentage X / 2.5
@@ -456,8 +544,9 @@ function convertHeating(value) {
 }
 
 function convertHeatingBack(value) {
-    let result = value * 2.5;
-    return result;
+    // Must be a whole byte: value * 2.5 is fractional for odd percentages.
+    let result = Math.round(value * 2.5);
+    return Math.min(255, Math.max(0, result));
 }
 
 // 3 is around 1 degree
@@ -598,7 +687,7 @@ VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HUMIDITY] = { name: 'Humidity', readon
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_HIGH] = { name: 'CO2High', readonly: true, command: Variables.CO2_HIGH };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.CO2_LOW] = { name: 'CO2Low', readonly: true, command: Variables.CO2_LOW };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.INSTALLED_CO2_SENSORS] = {
-    name: 'InstalledC02Sensors',
+    name: 'InstalledCO2Sensors',
     readonly: true,
     command: Variables.INSTALLED_CO2_SENSORS,
 };
@@ -643,7 +732,7 @@ VALLOX_COMMAND_VARIABLE_MAPPING[Variables.LAST_ERROR_NUMBER] = {
     command: Variables.LAST_ERROR_NUMBER,
 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_ON_COUNTER] = {
-    name: 'PostHeastingOnCounter',
+    name: 'PostHeatingOnCounter',
     readonly: false,
     command: Variables.POST_HEATING_ON_COUNTER,
 };
@@ -653,8 +742,9 @@ VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_OFF_TIME] = {
     command: Variables.POST_HEATING_OFF_TIME,
 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.POST_HEATING_TARGET_VALUE] = {
+    // 57H is marked read only in the protocol document.
     name: 'PostHeatingTargetValue',
-    readonly: false,
+    readonly: true,
     command: Variables.POST_HEATING_TARGET_VALUE,
 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_1] = { name: 'Flags1', readonly: true, command: Variables.FLAGS_1 };
@@ -662,15 +752,20 @@ VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_2] = { name: 'Flags2', readonly:
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_3] = { name: 'Flags3', readonly: true, command: Variables.FLAGS_3 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_4] = { name: 'Flags4', readonly: true, command: Variables.FLAGS_4 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_5] = { name: 'Flags5', readonly: true, command: Variables.FLAGS_5 };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_6] = { name: 'Flags6', readonly: true, command: Variables.FLAGS_6 };
+// 71H bit 5 activates the fireplace switch: "read the variable and set this number one".
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FLAGS_6] = { name: 'Flags6', readonly: false, command: Variables.FLAGS_6 };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.FIRE_PLACE_BOOSTER_COUNTER] = {
+    // 79H is the read-only countdown of the running function. Trigger the booster
+    // by setting Flags6 bit 5 instead.
     name: 'FirePlaceBoosterCounter',
-    readonly: false,
+    readonly: true,
     command: Variables.FIRE_PLACE_BOOSTER_COUNTER,
 };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SUSPEND] = { name: 'Suspend', readonly: true, command: Variables.SUSPEND };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.RESUME] = { name: 'Resume', readonly: true, command: Variables.RESUME };
-VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SELECT] = { name: 'Select', readonly: true, command: Variables.SELECT };
+// 91H / 8FH are write-only bus control commands ("vain kirjoitus").
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SUSPEND] = { name: 'Suspend', readonly: false, command: Variables.SUSPEND };
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.RESUME] = { name: 'Resume', readonly: false, command: Variables.RESUME };
+// A3H bits 0-3 are the panel keys and are writable; bits 4-7 are indicator lamps and read only.
+VALLOX_COMMAND_VARIABLE_MAPPING[Variables.SELECT] = { name: 'Select', readonly: false, command: Variables.SELECT };
 VALLOX_COMMAND_VARIABLE_MAPPING[Variables.HEATING_SET_POINT] = {
     name: 'HeatingSetPoint',
     readonly: false,
@@ -759,12 +854,20 @@ function getVariableName(command) {
     return variable;
 }
 
+// Misspelled names that older flows may still send. Accepted as input; never emitted.
+const VALLOX_LEGACY_VARIABLE_NAMES = Object.freeze({
+    InstalledC02Sensors: 'InstalledCO2Sensors',
+    PostHeastingOnCounter: 'PostHeatingOnCounter',
+});
+
 function getVariableMappingEntry(variable) {
+    let name = VALLOX_LEGACY_VARIABLE_NAMES[variable] || variable;
+
     let result;
     let keys = Object.keys(VALLOX_COMMAND_VARIABLE_MAPPING);
     for (let key of keys) {
         let entry = VALLOX_COMMAND_VARIABLE_MAPPING[key];
-        if (entry.name === variable) {
+        if (entry.name === name) {
             result = entry;
             break;
         }
@@ -815,6 +918,7 @@ function convertValue(command, rawValue) {
         case Variables.HUMIDITY:
         case Variables.HUMIDITY_SENSOR1:
         case Variables.HUMIDITY_SENSOR2:
+        case Variables.BASIC_HUMIDITY_LEVEL:
             value = convertHumidity(rawValue);
             break;
         case Variables.CO2_HIGH:
@@ -889,9 +993,6 @@ function convertValue(command, rawValue) {
         case Variables.MAINTENANCE_MONTH_COUNTER:
             value = rawValue;
             break;
-        case Variables.BASIC_HUMIDITY_LEVEL:
-            value = rawValue;
-            break;
         case Variables.DC_FAN_INPUT_ADJUSTMENT:
         case Variables.DC_FAN_OUTPUT_ADJUSTMENT:
             value = rawValue; // %
@@ -926,7 +1027,6 @@ function convertValueBack(command, value) {
         case Variables.HEATING_SET_POINT:
         case Variables.PRE_HEATING_SET_POINT:
         case Variables.INPUT_FAN_STOP:
-        case Variables.POST_HEATING_TARGET_VALUE:
             convertedValue = convertTemperatureBack(value);
             break;
         case Variables.CELL_DEFROSTING_HYSTERESIS:
@@ -936,9 +1036,6 @@ function convertValueBack(command, value) {
         case Variables.POST_HEATING_OFF_TIME:
             convertedValue = convertHeatingBack(value);
             break;
-        case Variables.FIRE_PLACE_BOOSTER_COUNTER:
-            convertedValue = value; // minutes remaining
-            break;
         case Variables.SERVICE_REMINDER:
             convertedValue = value; // months
             break;
@@ -946,7 +1043,23 @@ function convertValueBack(command, value) {
             convertedValue = value;
             break;
         case Variables.BASIC_HUMIDITY_LEVEL:
-            convertedValue = value;
+            convertedValue = convertHumidityBack(value);
+            break;
+        case Variables.SELECT:
+            convertedValue = convertSelectBack(value);
+            break;
+        case Variables.FLAGS_6:
+            convertedValue = convertFlags6Back(value);
+            break;
+        case Variables.PROGRAM:
+            convertedValue = convertProgramBack(value);
+            break;
+        case Variables.PROGRAM2:
+            convertedValue = convertProgram2Back(value);
+            break;
+        case Variables.SUSPEND:
+        case Variables.RESUME:
+            convertedValue = 0; // DATA is always 0 for the bus control commands
             break;
         case Variables.DC_FAN_INPUT_ADJUSTMENT:
         case Variables.DC_FAN_OUTPUT_ADJUSTMENT:
@@ -1024,7 +1137,9 @@ function decode(buffer, messageHandler, errorHandler) {
     }
 }
 
-// encodes a 6 bytes telegram for a binary buffer.
+// encodes a 6 bytes telegram for a binary buffer. When message.repeatChecksum is set the checksum
+// is appended a second time, making it 7 bytes: Annex B requires this of a write addressed to a
+// mainboard, and real panels do it.
 function encode(message, bufferHandler, errorHandler) {
     if (message !== undefined) {
         let domain = message.domain;
@@ -1040,6 +1155,10 @@ function encode(message, bufferHandler, errorHandler) {
         buffer[3] = command;
         buffer[4] = arg;
         buffer[5] = calculateChecksum(buffer);
+
+        if (message.repeatChecksum) {
+            buffer.push(buffer[Constants.VALLOX_LENGTH - 1]);
+        }
 
         bufferHandler(buffer);
     } else {

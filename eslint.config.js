@@ -7,7 +7,7 @@ const prettier = require('eslint-config-prettier');
 module.exports = [
     js.configs.recommended,
     {
-        files: ['vallox/**/*.js', 'test/**/*.js'],
+        files: ['vallox/**/*.js', 'test/**/*.js', 'tools/**/*.js', 'eslint.config.js'],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'commonjs',

@@ -177,6 +177,14 @@ describe('vallox protocol module', function () {
             'CO2SetPointLower',
             'Program',
             'Program2',
+            'PostHeatingOnCounter',
+            'PostHeatingOffTime',
+            // A3H bits 0-3 are the panel keys; 71H bit 5 activates the fireplace switch.
+            'Select',
+            'Flags6',
+            // 8FH / 91H are write-only bus control commands.
+            'Suspend',
+            'Resume',
         ];
 
         const readonlyVars = [
@@ -185,13 +193,20 @@ describe('vallox protocol module', function () {
             'TemperatureInside',
             'TemperatureIncoming',
             'Humidity',
+            'HumiditySensor1',
+            'HumiditySensor2',
             'CO2High',
             'CO2Low',
             'LastErrorNumber',
             'Flags1',
             'Flags2',
-            'Flags6',
+            'Flags4',
             'IoPortFanSpeedRelays',
+            'InstalledCO2Sensors',
+            'CurrentIncoming',
+            // Marked read only in the protocol document.
+            'PostHeatingTargetValue',
+            'FirePlaceBoosterCounter',
         ];
 
         writable.forEach((name) => {
@@ -204,6 +219,90 @@ describe('vallox protocol module', function () {
             it(`${name} is readonly`, function () {
                 assert.strictEqual(vallox.convert(name, 1).readonly, true);
             });
+        });
+    });
+
+    describe('humidity uses the documented formula', function () {
+        // 33H = 0 %RH, FFH = 100 %RH, (x - 51) / 2.04
+        it('decodes the endpoints of the scale', function () {
+            assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, 0x2a, 0x33)).value, 0);
+            assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, 0x2a, 0xff)).value, 100);
+        });
+
+        it('applies to both sensors and to the basic humidity level', function () {
+            for (const command of [0x2a, 0x2f, 0x30, 0xae]) {
+                assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, command, 0x33)).value, 0);
+                assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, command, 0xff)).value, 100);
+            }
+        });
+
+        it('round-trips a BasicHumidityLevel setpoint', function () {
+            for (const percent of [0, 25, 40, 60, 100]) {
+                const { arg } = vallox.convert('BasicHumidityLevel', percent);
+                assert.ok(Number.isInteger(arg) && arg >= 0 && arg <= 255, `arg ${arg}`);
+                const decoded = decodeOk(frame(1, 0x21, 0x11, 0xae, arg)).value;
+                assert.ok(Math.abs(decoded - percent) <= 0.5, `${percent} -> ${arg} -> ${decoded}`);
+            }
+        });
+    });
+
+    describe('writable bit fields round-trip', function () {
+        // Reading gives an object; writing that object back must reproduce the same byte, so a
+        // value can be read, modified and written (read-modify-write).
+        for (const [name, command] of [
+            ['Select', 0xa3],
+            ['Flags6', 0x71],
+            ['Program', 0xaa],
+            ['Program2', 0xb5],
+        ]) {
+            it(`${name} survives decode -> convert for all 256 bytes`, function () {
+                for (let byte = 0; byte <= 0xff; byte++) {
+                    const decoded = decodeOk(frame(1, 0x11, 0x20, command, byte)).value;
+                    assert.strictEqual(vallox.convert(name, decoded).arg, byte);
+                }
+            });
+        }
+
+        it('accepts an already-composed byte as well as an object', function () {
+            assert.strictEqual(vallox.convert('Select', 0x0f).arg, 0x0f);
+        });
+
+        it('sets Flags6 bit 5 to activate the fireplace switch', function () {
+            const flags = decodeOk(frame(1, 0x11, 0x20, 0x71, 0x00)).value;
+            flags.FirePlaceSwitchActivator = true;
+            assert.strictEqual(vallox.convert('Flags6', flags).arg, 0x20);
+        });
+    });
+
+    describe('setpoints always encode to a whole byte', function () {
+        it('rounds the post-heating counters instead of emitting a fraction', function () {
+            // byte = percent * 2.5, which is fractional for odd percentages
+            for (const percent of [1, 3, 7, 33, 99]) {
+                for (const name of ['PostHeatingOnCounter', 'PostHeatingOffTime']) {
+                    const { arg } = vallox.convert(name, percent);
+                    assert.ok(Number.isInteger(arg), `${name} ${percent} -> ${arg}`);
+                    assert.ok(arg >= 0 && arg <= 255, `${name} ${percent} -> ${arg}`);
+                }
+            }
+        });
+
+        it('clamps rather than overflowing the byte', function () {
+            assert.strictEqual(vallox.convert('PostHeatingOnCounter', 1000).arg, 255);
+        });
+    });
+
+    describe('legacy misspelled variable names', function () {
+        it('still resolve to the corrected variable', function () {
+            assert.deepStrictEqual(
+                vallox.convert('PostHeastingOnCounter', 40),
+                vallox.convert('PostHeatingOnCounter', 40)
+            );
+            assert.deepStrictEqual(vallox.convert('InstalledC02Sensors', 1), vallox.convert('InstalledCO2Sensors', 1));
+        });
+
+        it('are not what decode reports', function () {
+            assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, 0x55, 0x64)).variable, 'PostHeatingOnCounter');
+            assert.strictEqual(decodeOk(frame(1, 0x11, 0x20, 0x2d, 0x02)).variable, 'InstalledCO2Sensors');
         });
     });
 

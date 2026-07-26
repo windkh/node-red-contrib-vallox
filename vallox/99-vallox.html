@@ -8,6 +8,8 @@
         color: '#DDDDDD',
         defaults: {
             description: { value: '' },
+            debug: { value: false },
+            capturefile: { value: '' },
         },
         inputs: 1,
         outputs: 2,
@@ -27,16 +29,34 @@
         <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
         <input type="text" id="node-input-description" placeholder="The description of the node (optional)">
     </div>
+    <div class="form-row">
+        <label for="node-input-debug"><i class="fa fa-bug"></i> Diagnostics</label>
+        <input type="checkbox" id="node-input-debug" style="width:auto; vertical-align:top;">
+        <span>Log every chunk and framing decision</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-capturefile"><i class="fa fa-file-o"></i> Capture file</label>
+        <input type="text" id="node-input-capturefile" placeholder="e.g. C:\temp\vallox.bin (optional)">
+    </div>
+    <div class="form-tips">
+        Leave both empty for normal operation. With diagnostics on, the node logs each received chunk
+        and each framing decision as hex, and its status shows running counters. A capture file
+        appends the raw bytes exactly as received, for offline analysis.
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="valloxrx">
     <p>Decodes Vallox RS485 telegrams (6-byte frames) from a raw byte stream &mdash; typically the output of a <code>serial in</code> node or an MQTT bridge.</p>
-    <p>Incoming bytes are buffered until a complete frame is available. Misaligned leading bytes are dropped at the next start byte (<code>0x01</code>).</p>
+    <p>Incoming bytes are buffered until a complete frame is available. Misaligned leading bytes are dropped at the next start byte (<code>0x01</code>). Because <code>0x01</code> is also a legal value elsewhere in a frame, a window that fails its checksum costs only its first byte before the node rescans.</p>
 
     <h3>Configuration</h3>
     <dl class="message-properties">
         <dt class="optional">Description <span class="property-type">string</span></dt>
         <dd>Optional label shown on the node in the editor.</dd>
+        <dt class="optional">Diagnostics <span class="property-type">boolean</span></dt>
+        <dd>Logs every received chunk and every framing decision as hex, and replaces the node status with running counters: bytes received, frames decoded out of the number the byte count implies, bytes dropped and checksum failures. Use it to tell a lossy transport from a mis-wired one &mdash; a healthy stream is one frame per six bytes with no drops.</dd>
+        <dt class="optional">Capture file <span class="property-type">string</span></dt>
+        <dd>If set, every received byte is appended to this file exactly as it arrived. Nothing is written unless a path is given. Useful for offline analysis: a capture that is not a clean concatenation of 6-byte frames shows whether bytes are being lost or corrupted upstream.</dd>
     </dl>
 
     <h3>Inputs</h3>
@@ -133,6 +153,7 @@
             description: { value: '', required: true },
             receiver: { value: '33', required: true },
             sendonnewdata: { value: true, required: true },
+            writesequence: { value: true },
         },
         inputs: 1,
         outputs: 3,
@@ -170,6 +191,16 @@
         <label for="node-input-sendonnewdata"><i class="fa fa-rss"></i> Send msg on new data.</label>
         <input type="checkbox" id="node-input-sendonnewdata" style="display: inline-block; width: auto; vertical-align: top;">
     </div>
+    <div class="form-row">
+        <label for="node-input-writesequence"><i class="fa fa-share-alt"></i> Write like a panel</label>
+        <input type="checkbox" id="node-input-writesequence" style="display: inline-block; width: auto; vertical-align: top;">
+        <span>Three telegrams per SET, as the original control unit sends</span>
+    </div>
+    <div class="form-tips">
+        A real panel writes a register to the mainboard (checksum sent twice), then to all panels,
+        then to all mainboards. Unticking this sends only the telegram to the mainboard, which the
+        master normally propagates by itself.
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="vallox">
@@ -180,9 +211,11 @@
         <dt>Description <span class="property-type">string</span></dt>
         <dd>Label shown on the node.</dd>
         <dt>Receiver <span class="property-type">number</span></dt>
-        <dd>RS485 address of the panel or master this node represents (Panel 1 = 33 / 0x21 &hellip; Panel 7 = 39 / 0x27, LON = 40 / 0x28, Master 1 = 17 / 0x11).</dd>
+        <dd>RS485 address of the panel or master this node represents (Panel 1 = 33 / 0x21 &hellip; Panel 7 = 39 / 0x27, LON = 40 / 0x28, Master 1 = 17 / 0x11). This address is also used as the <em>sender</em> of outgoing telegrams, so pick one that no physical panel already uses &mdash; two devices answering to the same address will collide.</dd>
         <dt>Send msg on new data <span class="property-type">boolean</span></dt>
         <dd>If checked, output 1 fires every time a matching <code>SET</code> frame updates the state; otherwise output 1 only fires on an explicit query.</dd>
+        <dt>Write like a panel <span class="property-type">boolean</span></dt>
+        <dd>A <code>SET</code> produces the same three telegrams a real control unit sends: to the mainboard with the checksum repeated, then to all panels, then to all mainboards. Unticking sends only the first, which the master normally propagates on its own.</dd>
     </dl>
 
     <h3>Inputs</h3>
@@ -191,7 +224,7 @@
         <dt>Decoded frame <span class="property-type">object</span></dt>
         <dd>Output of the <strong>valloxrx</strong> node (an object with a <code>receiver</code> field). Matching frames update the internal state.</dd>
         <dt>Request <span class="property-type">object</span></dt>
-        <dd><code>{ request: "GET" | "SET", variable: "&lt;name&gt;", value: &lt;value&gt; }</code> &mdash; produces an encoded request on output 2. A <code>SET</code> on a readonly variable goes to output 3 as an error.</dd>
+        <dd><code>{ request: "GET" | "SET", variable: "&lt;name&gt;", value: &lt;value&gt; }</code> &mdash; produces an encoded request on output 2. A <code>GET</code> needs no <code>value</code>; the unit's reply arrives as ordinary bus traffic and lands in the state. Only seven registers are broadcast without being asked for, so most variables have to be polled with a <code>GET</code>. Bit fields such as <code>Select</code> accept the decoded object back, so read-modify-write works.</dd>
         <dt class="optional">Anything else / empty <span class="property-type">any</span></dt>
         <dd>Emits the current state snapshot on output 1.</dd>
     </dl>
@@ -213,7 +246,7 @@
         <li>Error
             <dl class="message-properties">
                 <dt>payload <span class="property-type">string</span></dt>
-                <dd>Error message (e.g. attempt to <code>SET</code> a readonly variable).</dd>
+                <dd>Error message: a <code>SET</code> on a readonly variable, an unknown variable name, a value that does not encode to a single byte, or a request made while the unit has prohibited bus transmission (<code>91H</code>).</dd>
             </dl>
         </li>
     </ol>

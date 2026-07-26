@@ -1,6 +1,10 @@
                                           VALLOX DIGIT bus protocol
 
-Translated April 11 2021 from the Finish document written by Vallox/Petteri Kähärä
+NOTE: this is a pdftotext extract and the conversion lost or garbled a few things. Four spots have
+been corrected against the second translation in vallox-rs485-protocol.md; see the "Corrections
+applied" section there for the list. Do not revert them.
+
+Translated April 11 2021 from the Finish document written by Vallox/Petteri Kï¿½hï¿½rï¿½
 27.06.2011
 Also valid for Helios KWL, with additional comments in Annex B
 
@@ -229,8 +233,8 @@ results do not match, the recipient rejects the received packet.
 - 33H EXHAUST TEMPERATURE                                                                         read only
           Exhaust air temperature on the NTC sensor scale.
                                                                                                   read only
-- 34H EXHAUST TEMPERATURE
-          Exhaust air temperature on the NTC sensor scale.                                        read only
+- 34H EXTRACT AIR TEMPERATURE
+          Extract air temperature on the NTC sensor scale.                                        read only
                                                                                                   read only
 - 35H SUPPLY AIR TEMPERATURE                                                                      read only
           Supply air temperature on the NTC sensor scale.
@@ -240,7 +244,7 @@ results do not match, the recipient rejects the received packet.
           05H = Supply air sensor fault
           06H = Carbon dioxide alarm
           07H = Outdoor sensor fault
-          08H = Exhaust air sensor fault
+          08H = Extract air sensor fault
           09H = Danger of the water coil freezing
           0AH = Exhaust air sensor fault
 
@@ -252,7 +256,7 @@ results do not match, the recipient rejects the received packet.
           Post-heating off-time in seconds, counter.
           as a percentage: X / 2.5
 
-- 57H POST HEATING TARGET VALUE
+- 57H POST HEATING TARGET VALUE                                                              r
           Target temperature of the air blown into the ventilation zone on the NTC sensor scale.
 
 - 6DH  FLAGS 2 flag variables                                             r
@@ -304,9 +308,9 @@ results do not match, the recipient rejects the received packet.
                                                                                                   read only
        bit 5 = Post Heating LED                    0 = off                                        read only
                                                                                                   read only
-       bit 6 = fault LED                           0 = off
+       bit 6 = fault LED                           0 = off                                        read only
 
-       bit 7 = service reminder                    0 = off
+       bit 7 = service reminder                    0 = off                                        read only
 
 - A4H POST HEATING SETPOINT
           Post-heating target value on the NTC sensor scale.
@@ -369,7 +373,7 @@ results do not match, the recipient rejects the received packet.
           DC exhaust fan control setpoint as a percentage.
 
 - B2H CELL ANTI-FREEZE TEMPERATURE HYSTERESIS
-          Hysteresis of cell antifreeze temperatures, 03H  1 ° C.
+          Hysteresis of cell antifreeze temperatures, 03H  1 ï¿½ C.
 
 - B3H CARBON DIOXIDE CONTROL SETPOINT 16 BIT
           Carbon control control setpoint in 16-bit, the upper byte directly indicates the concentration PPM
@@ -383,9 +387,9 @@ results do not match, the recipient rejects the received packet.
 The use of variables other than those mentioned above is strictly prohibited!
                   VALLOX DIGIT bus protocol
 
-ANNEX A  CONVERSION TABLE: NTC SENSOR SCALE - ° C
+ANNEX A  CONVERSION TABLE: NTC SENSOR SCALE - ï¿½ C
 
-HEX DEC °C HEX DEC °C  HEX  DEC °C                 HEX DEC °C
+HEX DEC ï¿½C HEX DEC ï¿½C  HEX  DEC ï¿½C                 HEX DEC ï¿½C
 00  0 -74 40  64 -12   80   128 9                  C0 192 34
 01  1 -70 41  65 -12   81   129 9                  C1 193 34
 02  2 -66 42  66 -12   82   130 9                  C2 194 35

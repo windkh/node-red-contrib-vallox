@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-vallox",
-    "version": "0.1.21",
+    "version": "0.1.30",
     "description": "Vallox node for serial RS485 protocol.",
     "files": [
         "vallox/",
@@ -27,19 +27,19 @@
     "author": "Karl-Heinz Wind",
     "license": "MIT",
     "scripts": {
-        "lint": "eslint vallox/ test/",
+        "lint": "eslint vallox/ test/ tools/ eslint.config.js",
         "test": "node --test",
-        "lint:fix": "eslint . --fix",
+        "lint:fix": "eslint vallox/ test/ tools/ eslint.config.js --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "coverage": "c8 node --test",
         "coverage:check": "c8 --check-coverage node --test"
     },
     "c8": {
-        "lines": 78,
-        "statements": 78,
-        "branches": 71,
-        "functions": 63,
+        "lines": 97,
+        "statements": 97,
+        "branches": 95,
+        "functions": 98,
         "exclude": [
             "test/**",
             "eslint.config.js"

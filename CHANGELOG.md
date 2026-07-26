@@ -2,6 +2,176 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.30]
+
+### Write a register the way a real control unit does
+
+Taken from a capture of an original Vallox panel stepping the fan speed 1 → 8 → 1. All 14 changes
+used the same three-telegram sequence, and the package was sending one telegram.
+
+- A `SET` now produces three telegrams: to the mainboard with the checksum repeated (7 bytes), then
+  to all panels (`0x20`), then to all mainboards (`0x10`). The encoded bytes are identical to the
+  panel's — verified against `01 21 11 29 07 63 63`, `01 21 20 29 07 72`, `01 21 10 29 07 62`.
+- `encode` honours `repeatChecksum` on a telegram and appends the checksum a second time.
+- New **Write like a panel** option on the `vallox` node (on by default). Unticking it sends only the
+  mainboard telegram, still with the repeated checksum; the master propagates the change itself, which
+  the capture also shows.
+- Fixed message aliasing in the `vallox` node: the three telegrams shared one `msg` object, so only
+  the last survived. Same defect the RX node had for back-to-back frames.
+- A `GET` remains a single telegram and never repeats its checksum.
+- Documented that the configured **Receiver** doubles as the sender address of outgoing telegrams, so
+  it must not clash with a physical panel.
+
+## [0.1.29]
+
+### Accept the 7-byte write telegram (Annex B)
+
+Found by analysing a capture of a real bus: 17 of the 19 framing complaints in it were not damage at
+all, but a documented protocol feature the decoder did not know about.
+
+- Annex B of the protocol document says a write telegram "MUST be followed by sending its CHECKSUM
+  twice", making it 7 bytes rather than 6. Real panels do exactly that: `01 22 11 af 86 69 69` is
+  panel 2 setting `HRCBypass` on mainboard 1. `valloxrx` now recognises the repeat and consumes it,
+  instead of resynchronising through it and reporting `Dropped 1 bytes` each time. On the sample
+  capture that took the dropped-byte count from 32 to 15 and the framing complaints from 19 to 2.
+- The repeat is only taken when the byte cannot itself begin a valid frame, so a following telegram
+  whose checksum happens to be `0x01` is not swallowed. Both cases are covered by tests using frames
+  from the capture.
+- `tools/analyse-capture.js` counts 7-byte writes separately rather than reporting them as extra
+  bytes, and no longer asserts a transport fault on the strength of them. Its "foreign data" advice
+  now also covers spliced damaged frames, which is what the residual breaks in the sample turned out
+  to be.
+
+## [0.1.28]
+
+### Diagnostics for a lossy byte stream
+
+- `valloxrx` gained two optional settings, both off by default and inert unless configured:
+  **Diagnostics** logs every received chunk and every framing decision as hex and puts running
+  counters in the node status (bytes, frames decoded out of the number the byte count allows, bytes
+  dropped, checksum failures); **Capture file** appends every received byte to a file exactly as it
+  arrived.
+- Added `tools/analyse-capture.js`, which walks a capture and classifies every point where the
+  stream stops being a clean run of 6-byte frames: a **lost byte** (realigns one byte early), an
+  **extra byte** (realigns one byte late), a **corrupted byte** (alignment intact, one frame
+  unreadable), or **foreign data** (a run that is not Vallox traffic at all — another device on the
+  bus, or a gateway injecting its own polling). It reports the repeated run length for foreign data,
+  since a constant size means a periodic poll. That separates a transport fault from line noise from
+  a bus intruder. Verified against synthetic captures of each kind, including an injected Modbus
+  `01 03 00 00 00 0A` poll. Not shipped in the npm package.
+
+## [0.1.27]
+
+### Resynchronise on a single byte, not a whole frame
+
+- `valloxrx` used to consume all six bytes of a window that failed its checksum. `0x01` is only a
+  probable frame start — it is also a legal sender, command, argument and checksum value — so that
+  window often contained the _next_ frame's real start byte, and discarding it turned one lost byte
+  into two lost frames. A failed checksum now gives up only the candidate start byte and rescans.
+  Measured over a 200-frame stream with one byte removed at every possible position: the old
+  behaviour recovered 198.2 frames on average, the new one recovers all 199.
+- A buffer holding no `0x01` at all no longer grows without bound; only the last five bytes are
+  kept, since a frame start cannot be further back than that.
+- A clean stream still produces no warnings and no errors, which is what makes recurring
+  `Dropped n bytes` / `Checksum check failed` messages a signal that something upstream is losing
+  bytes rather than noise from the decoder.
+
+## [0.1.26]
+
+### Say what to do when a payload arrives as text
+
+- The rejection message for a string payload now reports its length and a hex preview and names the
+  cause: an MQTT node set to `auto-detect` turns any chunk that happens to be valid UTF-8 into a
+  string, so a binary telegram stream arrives as a mixture of Buffers and strings. That conversion
+  is lossy, so the bytes cannot be recovered in the node — the source has to be set to deliver a
+  Buffer. The message says so.
+
+## [0.1.25]
+
+### Fix a crash in `valloxrx` on any payload that is not a Buffer
+
+- A payload that was not a `Buffer` reached `Buffer.concat` and threw. The `input` handler is
+  `async`, so the exception became an unhandled rejection and **stopped the whole Node-RED
+  process** — reported as `TypeError: The "list[1]" argument must be an instance of Buffer or
+Uint8Array. Received type string ('[')`.
+- `valloxrx` now accepts every payload shape real flows deliver: a `Buffer` (serial port), a
+  `Uint8Array`, a plain array of bytes, and the JSON text `"[1,17,32,...]"` that an MQTT hop
+  produces from an array payload. Mixed shapes reassemble across messages.
+- Anything else — an object, a string that is not an array, an empty payload, an array holding a
+  non-byte — goes to the error output with a message naming the problem. The node keeps working
+  afterwards; nothing thrown from this handler can reach the runtime.
+- Tests 139 → 150, including the exact input from the crash report.
+
+## [0.1.24]
+
+### Add the second protocol translation and correct the pdftotext extract
+
+- Added `doc/vallox-rs485-protocol.md`: a second translation of the Vallox DIGIT bus protocol that
+  keeps the per-register and per-bit `read only` / `write only` markers the pdftotext extract lost.
+  It is now the authority for writability; `doc/protocol.txt` is kept because it alone carries
+  Annex B (the 12-second broadcast list, the Helios three-recipient write sequence, the
+  user-terminal traces).
+- Corrected four errors in `doc/protocol.txt`, with a note at the top so they are not reverted:
+  `57H` was missing its read-only marker, `A3H` bits 6 and 7 had lost theirs, `34H` was titled
+  "EXHAUST TEMPERATURE" (duplicating `33H`; it is extract air), and fault code `08H` read "Exhaust
+  air sensor fault" (duplicating `0AH`; it is extract air).
+- `test/protocol-doc.test.js` now parses the read/write markers as well as the NTC table: 17
+  registers marked read-only in the document are asserted to be non-writable, `8FH`/`91H` are
+  asserted writable, and the two translations are checked to agree on the NTC table entry by entry,
+  the humidity formula and `03H` ≅ 1 °C. Tests 132 → 139.
+
+## [0.1.23]
+
+### Conform to the Vallox protocol document
+
+Corrections against the official RS485 interface description. Several change values or behaviour on
+the wire — see the notes at the end.
+
+- **`request: 'GET'` works.** The read request now carries `0x00` in the command byte and the
+  register in the argument, as the request/response principle specifies. It previously built the
+  telegram like a `SET`, producing a frame that failed its own checksum, which left every register
+  the master does not broadcast unreachable — only `2AH`, `2BH`, `2CH` and `32H`-`35H` are broadcast.
+- **`Select` (`A3H`) is writable.** Bits 0-3 are the power, CO2, %RH and post-heating keys; bits 4-7
+  are read-only lamps. This is the on/off switch, and it was previously unreachable.
+- **`Flags6` (`71H`) is writable.** Bit 5 activates the fireplace/booster function — "read the
+  variable and set this number one".
+- **`PostHeatingTargetValue` (`57H`) and `FirePlaceBoosterCounter` (`79H`) are read-only**, both
+  marked so in the document. `79H` is the countdown of a running function, not a way to start one.
+- **`Suspend` (`91H`) and `Resume` (`8FH`) are write-only bus control commands** and can now be
+  sent. The `vallox` node also honours received ones: while transmission is prohibited it refuses to
+  emit telegrams and reports each refusal on output 3. The block lapses after 10 s so a missed `8FH`
+  cannot wedge the node.
+- **Bit fields round-trip.** `Select`, `Flags6`, `Program` and `Program2` accept a decoded object as
+  well as a raw byte, verified lossless for all 256 values, so read-modify-write works. Writing
+  `Program`/`Program2` previously put the object itself into the telegram.
+- **Humidity uses the documented formula** `(x - 51) / 2.04`, given for `2AH`, `2FH`, `30H` and
+  `AEH`. Values were passed through as raw bytes.
+- **Post-heating counter writes round to a whole byte.** `SET PostHeatingOffTime 1` produced an
+  argument of `2.5` and a corrupt frame; setpoints are also clamped to `0`-`255`.
+- **Corrected variable names:** `InstalledC02Sensors` → `InstalledCO2Sensors` (letter O, not zero)
+  and `PostHeastingOnCounter` → `PostHeatingOnCounter`. The old spellings are still accepted as
+  request input; decoded messages use the corrected ones.
+- A request naming an unknown variable, or a value that cannot encode to a byte, now goes to
+  output 3 instead of emitting a malformed telegram.
+- Tests 101 → 132, covering the GET frame shape, the suspend gate, the new flags, the humidity
+  formula and the bit-field round-trips. README, node help text, example flows and architecture docs
+  updated. Coverage 80% → 99%; the c8 thresholds were raised to match.
+
+**Behaviour changes to check in existing flows:** `Humidity`, `HumiditySensor1`, `HumiditySensor2`
+and `BasicHumidityLevel` now report %RH rather than the raw byte, so `BasicHumidityLevel` setpoints
+are given in %RH too. `PostHeatingTargetValue` and `FirePlaceBoosterCounter` can no longer be
+written. `Program2` decodes with `Bit1`-`Bit7` alongside `MaxSpeedLimitMode`.
+
+## [0.1.22]
+
+### Full command/variable reference, architecture docs and generated example flows
+
+- `README.md` gained a command reference: all 21 writable variables and all 24 read-only ones with command byte, unit and meaning, the field names of every object-valued variable, and a section on monitoring. The tables were generated from `VALLOX_COMMAND_VARIABLE_MAPPING`, not transcribed.
+- Filled in `doc/architecture/` (overview, structural design, behavioural design) and added ADRs 0001-0003 for the entry-file delegation, the read-only short-circuit and the single mapping table.
+- Added two example flows: `examples/vallox-commands.json` (one inject per writable variable) and `examples/vallox-monitor.json` (bus decoding with replayable sample frames, including a corrupt one). Both were generated and every value in them is checked by the suite.
+- New tests, 61 → 101: `protocol-doc.test.js` parses `doc/protocol.txt` and verifies all 256 Annex A temperature entries, the fan-speed bit ramp, the fault codes and command-byte coverage; `readme-tables.test.js` fails if the README tables drift from the code; `examples.test.js` validates every shipped flow.
+- Documented seven behaviours that disagree with the protocol document or are otherwise surprising — most importantly that `request: 'GET'` builds a malformed frame. Nothing was changed in `vallox/` — see the README's "Notes and known deviations".
+
 ## [0.1.21]
 
 ### Advisory forward-compat CI job

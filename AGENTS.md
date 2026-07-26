@@ -120,4 +120,9 @@ Adding a test: the helper boots Node-RED in-process; pattern is `helper.startSer
 
 ## Reference docs
 
-The plaintext extract of the protocol PDF lives at [doc/protocol.txt](doc/protocol.txt) (Annex A is the NTC table, Annex B has worked sample frames and the Helios 3-message write quirk). Consult it — not the code — when adding or fixing variable definitions or bit-layout decoders.
+Two translations of the protocol document are kept, and they are the authority when adding or fixing variable definitions or bit-layout decoders — not the code, and not the `valloxserial` Arduino library this package was ported from.
+
+- [doc/vallox-rs485-protocol.md](doc/vallox-rs485-protocol.md) — **use this for read/write classification.** It has the per-register and per-bit `read only` / `write only` markers.
+- [doc/protocol.txt](doc/protocol.txt) — pdftotext extract of the other translation. Four spots were corrected against the file above; the header lists them. It alone has Annex B (the 12-second broadcast list, worked sample frames, the Helios 3-message write quirk).
+
+`test/protocol-doc.test.js` parses both at test time, so a variable whose flags contradict the documents fails the build.
