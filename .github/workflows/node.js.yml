@@ -40,7 +40,12 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: coverage-report
-                  path: coverage/
+                  # Only the readable report. `coverage/` also holds c8's raw V8 dump in
+                  # tmp/, which is ~97% of the bytes and inspectable by nothing — 6.6 MB of
+                  # tmp against a 303 kB report here.
+                  path: |
+                      coverage/lcov-report
+                      coverage/lcov.info
                   retention-days: 14
 
     forward-compat:
