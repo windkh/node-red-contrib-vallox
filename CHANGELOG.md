@@ -15,6 +15,16 @@ All notable changes to this project will be documented in this file.
   Standard bumps now arrive as dependabot PRs that can be reviewed on their own.
 - Audit 18/18 against node-red-standards 0.5.1.
 
+### Tag-driven publish, and least-privilege CI tokens
+
+- Pushing a `v*` tag now publishes and creates the GitHub release; a `verify` job re-runs
+  lint, format:check and test on the CI matrix first and checks that the tag agrees with
+  `package.json`. Pre-release tags go to the `beta` dist-tag.
+- Every workflow declares `permissions: contents: read`, with `contents: write` raised only
+  on the job that creates the release. Without a block a workflow inherits the repository
+  default, which is write to everything — what the four
+  `actions/missing-workflow-permissions` code-scanning alerts flagged.
+
 ## [0.1.38]
 
 ### Cache every register the mainboard reports, whoever asked for it
