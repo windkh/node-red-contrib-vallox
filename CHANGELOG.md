@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.39]
+
+### Run the standards audit from a pinned devDependency
+
+- `node-red-standards` is now a devDependency with the moving `github:windkh/node-red-standards`
+  specifier, plus `standards:audit` and `standards:sync` scripts, so the audit runs from the
+  installed copy instead of only through `npx`.
+- The standards-check workflow audits **that** copy — the one the lockfile pins — rather than
+  refetching the standard's default branch on every run. Before, a rule added upstream turned the
+  job red on a commit that had changed nothing: drift in the standard read as drift in the repo.
+  Standard bumps now arrive as dependabot PRs that can be reviewed on their own.
+- Audit 18/18 against node-red-standards 0.5.1.
+
 ## [0.1.38]
 
 ### Cache every register the mainboard reports, whoever asked for it
