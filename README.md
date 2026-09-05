@@ -17,9 +17,11 @@ Then use a serial node to read the data and feed it to the node.
 
 # Requirements
 
-Node-RED 3.1.0 or newer on Node.js 20 or newer. The nodes themselves use only long-standing
-runtime APIs, so the floor is set by Node.js 20: Node-RED 3.1.0 is the first release that
-supports it. The test suite runs against that floor.
+Node-RED 3.1.0 or newer on Node.js 22.13 or newer. The nodes themselves use only long-standing
+runtime APIs, so nothing here needs a recent Node: the floor tracks what the ecosystem still
+supports. Node.js 20 reached end of life on 2026-04-30, and Node-RED 5 requires Node.js 22.9 or
+newer, so a supported Node-RED install is already past this floor. The test suite runs against it
+and against Node.js 24.
 
 You also need a byte stream to and from the unit — typically
 [node-red-node-serialport](https://flows.nodered.org/node/node-red-node-serialport) on an RS485
