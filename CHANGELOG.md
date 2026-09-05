@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0]
+
+### Node.js 22.13 or newer is now required
+
+- **Breaking, in the declaration rather than the behaviour.** `engines.node` moves from `>=20.0.0`
+  to `>=22.13.0`, so `npm install` now warns with `EBADENGINE` on Node 20 — and fails under
+  `engine-strict=true`. The nodes themselves are unchanged: plain CommonJS, no runtime
+  dependencies, no API newer than Node 20, so they keep working where they already run.
+- The old floor described a configuration nothing supports. Node.js 20 reached end of life on
+  2026-04-30; Node-RED 5 requires Node.js 22.9 or newer, so a supported Node-RED 5 install could
+  never have been on Node 20; and ESLint 10 refuses to install below 20.19, meaning the repo warned
+  contributors about a floor it had set itself. 22.13 is ESLint 10's own floor on the 22 line.
+- CI now runs 22.x and 24.x — Node 24 for the first time — instead of 20.x, 22.x and 24.x. The
+  publish job stays pinned at 22.x, which tracks the strictest consumer and is a separate question.
+- Reasoning recorded in
+  [ADR 0004](doc/architecture/adr/0004-node-floor-follows-the-supported-ecosystem.md). Follows
+  node-red-standards 0.9.0, whose `sync` deliberately leaves an existing floor alone: raising a
+  published package's floor is a release decision, not a tool run.
+
 ## [0.1.39]
 
 ### Run the standards audit from a pinned devDependency
